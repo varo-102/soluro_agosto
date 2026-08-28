@@ -32,15 +32,18 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             // Soluro Icon/Logo Container
             Container(
-              padding: const EdgeInsets.all(6),
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
-                color: AppColors.azulProfundo,
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.amarilloSol.withValues(alpha: 0.5), width: 1.5),
               ),
-              child: const Icon(
-                Icons.qr_code_scanner,
-                color: AppColors.amarilloSol,
-                size: 20,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.asset(
+                  'assets/images/soluro_logo_cream.png',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             const SizedBox(width: 10),
