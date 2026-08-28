@@ -1,0 +1,375 @@
+<!DOCTYPE html><html class="dark" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>StoreVault - Share Location</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config injected from system prompt -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "surface-tint": "#49607e",
+                "primary-fixed": "#d2e4ff",
+                "tertiary-fixed-dim": "#eebd90",
+                "surface-container-highest": "#e2e2e2",
+                "on-error": "#ffffff",
+                "on-background": "#1a1c1c",
+                "background": "#f9f9f9",
+                "on-primary-fixed-variant": "#314865",
+                "surface-container": "#eeeeee",
+                "on-surface": "#1a1c1c",
+                "primary-fixed-dim": "#b0c8eb",
+                "surface-container-high": "#e8e8e8",
+                "on-error-container": "#93000a",
+                "tertiary-container": "#381d00",
+                "outline": "#74777e",
+                "error-container": "#ffdad6",
+                "surface-muted": "#F1F4F9",
+                "secondary-container": "#fdc003",
+                "azul-profundo": "#0A2540",
+                "outline-variant": "#c4c6ce",
+                "tertiary-fixed": "#ffdcbe",
+                "secondary-fixed": "#ffdf9e",
+                "text-on-light": "#0A2540",
+                "primary-container": "#0a2540",
+                "inverse-on-surface": "#f0f1f1",
+                "amarillo-sol": "#FFC107",
+                "on-secondary-container": "#6c5000",
+                "on-tertiary-fixed": "#2d1600",
+                "surface-container-lowest": "#ffffff",
+                "on-tertiary-container": "#ae835a",
+                "on-tertiary-fixed-variant": "#613f1c",
+                "secondary-fixed-dim": "#fabd00",
+                "text-on-dark": "#FFFFFF",
+                "primary": "#000f22",
+                "on-primary-fixed": "#001c37",
+                "on-secondary-fixed-variant": "#5b4300",
+                "on-surface-variant": "#43474d",
+                "on-primary": "#ffffff",
+                "on-secondary": "#ffffff",
+                "on-secondary-fixed": "#261a00",
+                "tertiary": "#1a0b00",
+                "inverse-primary": "#b0c8eb",
+                "surface-dim": "#dadada",
+                "surface": "#f9f9f9",
+                "error": "#ba1a1a",
+                "surface-variant": "#e2e2e2",
+                "on-tertiary": "#ffffff",
+                "on-primary-container": "#768dad",
+                "surface-container-low": "#f3f3f4",
+                "inverse-surface": "#2f3131",
+                "surface-bright": "#f9f9f9",
+                "secondary": "#785900"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "16px",
+                "xs": "4px",
+                "md": "16px",
+                "sm": "8px",
+                "lg": "24px",
+                "margin-mobile": "20px",
+                "xl": "32px",
+                "base": "4px",
+                "margin-desktop": "64px"
+        },
+        "fontFamily": {
+                "body-md": [
+                        "Geist"
+                ],
+                "headline-lg-mobile": [
+                        "Geist"
+                ],
+                "label-sm": [
+                        "Geist"
+                ],
+                "label-lg": [
+                        "Geist"
+                ],
+                "headline-lg": [
+                        "Geist"
+                ],
+                "headline-xl": [
+                        "Geist"
+                ],
+                "headline-md": [
+                        "Geist"
+                ],
+                "body-lg": [
+                        "Geist"
+                ]
+        },
+        "fontSize": {
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "28px",
+                        {
+                                "lineHeight": "36px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "label-lg": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-xl": [
+                        "40px",
+                        {
+                                "lineHeight": "48px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        /* Base styles to enforce clean aesthetics */
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Custom scrollbar for textareas to keep it minimal */
+        textarea::-webkit-scrollbar {
+            width: 4px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background-color: #dfdfe2;
+            border-radius: 4px;
+        }
+        
+        /* Hide default input outline on focus, relying on custom styles */
+        input:focus, textarea:focus {
+            outline: none;
+            box-shadow: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-[#121212] text-text-on-dark font-body-md min-h-screen relative pb-24 pt-16 selection:bg-amarillo-sol/20 mx-auto" style="width: 390px; height: 843px; margin: 0px auto; overflow-x: hidden; position: relative;">
+<!-- TopAppBar JSON execution -->
+<header class="fixed top-0 w-full z-50 backdrop-blur-xl bg-[#121212]/80"><div class="flex justify-between items-center px-margin-mobile h-14 w-full">
+<div class="flex items-center gap-2"><img alt="StoreVault Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_nYVoD0xCURCacK_7QcMuKv2QDB08hMuRQvR2fZQsCCavM4fEcpA2oVPAXuFQ8jFGAU-td3jPE8jciINuzybbl_p0ZirOOVUarECkAhqQHiITMABXhadAAbf132UzvKtN1h2yr-wx3JFCK86WkyRZfxv7NfDZCZ2KbWWgkvghZ92WrnTE1JGs3y8oGOE_dHwgaHrNVE1Za919qvjYB6pT9Wlow7bCIXYnYYGHMM3NYTcQJwCl0EGSGlIRCf-PuO4pczt58y7uB2Rk7w"></div>
+<h1 class="text-headline-md font-headline-md text-amarillo-sol truncate px-2">My Directions</h1>
+<div class="flex items-center gap-1">
+<button aria-label="Storefront" class="text-amarillo-sol p-2 active:scale-95 transition-transform"><span class="material-symbols-outlined">storefront</span></button>
+<button aria-label="Toggle Dark Mode" class="text-amarillo-sol p-2 active:scale-95 transition-transform flex items-center" id="theme-toggle">
+<span class="material-symbols-outlined hidden">dark_mode</span>
+<span class="material-symbols-outlined block">light_mode</span>
+</button>
+<button aria-label="Settings" class="text-amarillo-sol p-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div></header>
+<main class="px-margin-mobile flex flex-col gap-lg mt-sm">
+<!-- Header for context, even though top bar has brand -->
+<!-- Branch List Container -->
+<div class="flex flex-col gap-md" id="branch-list">
+<!-- Branch Card 1 -->
+<article class="bg-[#1e1e1e] rounded-xl p-md flex flex-col gap-md relative group">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-amarillo-sol" style="font-variation-settings: 'FILL' 1;">storefront</span>
+<h3 class="font-headline-md text-headline-md text-text-on-dark text-headline-lg">Main Branch</h3>
+</div>
+<button aria-label="Delete branch" class="text-gray-400 hover:text-error-container transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">delete</span>
+</button>
+</div>
+<div class="flex flex-col gap-xs">
+<!-- Location Name Input -->
+<div class="relative">
+<label class="sr-only" for="branch-1-name">Location Name</label>
+<input class="w-full bg-transparent border-0 border-b border-transparent focus:border-amarillo-sol px-0 text-text-on-dark font-body-md placeholder:text-gray-500 transition-colors focus:ring-0 py-1 text-body-lg" id="branch-1-name" placeholder="Location Name" type="text" value="Downtown Hub">
+</div>
+<!-- Description Textarea -->
+<div class="relative">
+<label class="sr-only" for="branch-1-desc">Description / Address</label>
+<textarea class="w-full bg-transparent border-0 border-b border-transparent focus:border-amarillo-sol px-0 text-text-on-dark font-body-md placeholder:text-gray-500 transition-colors resize-none focus:ring-0 py-1 text-body-lg" id="branch-1-desc" placeholder="Address &amp; References..." rows="2">123 Market Street, Suite 400. Next to the central plaza.</textarea>
+</div>
+<!-- Map Link Input -->
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-0 text-gray-400 text-[18px] pointer-events-none" style="font-variation-settings: 'FILL' 0;">map</span>
+<label class="sr-only" for="branch-1-map">Map Link</label>
+<input class="w-full bg-transparent border-0 border-b border-transparent focus:border-amarillo-sol pl-7 pr-0 text-text-on-dark font-body-md placeholder:text-gray-500 transition-colors focus:ring-0 py-1 text-body-lg" id="branch-1-map" placeholder="Map link or coordinates" type="text" value="maps.google.com/?q=123+Market+St">
+</div>
+</div>
+<!-- Action Button -->
+<button class="mt-sm w-full font-headline-md text-[14px] py-3 rounded-lg flex items-center justify-center gap-sm active:opacity-80 transition-opacity bg-amarillo-sol text-text-on-light" onclick="copyBranchInfo(this)" type="button">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 0;">content_copy</span>
+                    Copy Info
+                </button>
+</article>
+<!-- Branch Card 2 -->
+<article class="bg-[#1e1e1e] rounded-xl p-md flex flex-col gap-md relative">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-amarillo-sol" style="font-variation-settings: 'FILL' 1;">storefront</span>
+<h3 class="font-headline-md text-headline-md text-text-on-dark text-headline-lg">Westside Kiosk</h3>
+</div>
+<button aria-label="Delete branch" class="text-gray-400 hover:text-error-container transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">delete</span>
+</button>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="relative">
+<input class="w-full bg-transparent border-0 border-b border-transparent focus:border-amarillo-sol px-0 text-text-on-dark font-body-md placeholder:text-gray-500 transition-colors focus:ring-0 py-1 text-body-lg" placeholder="Location Name" type="text" value="Westside Kiosk">
+</div>
+<div class="relative">
+<textarea class="w-full bg-transparent border-0 border-b border-transparent focus:border-amarillo-sol px-0 text-text-on-dark font-body-md placeholder:text-gray-500 transition-colors resize-none focus:ring-0 py-1 text-body-lg" placeholder="Address &amp; References..." rows="2">890 West Avenue, Inside Metro Station.</textarea>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-0 text-gray-400 text-[18px] pointer-events-none" style="font-variation-settings: 'FILL' 0;">map</span>
+<input class="w-full bg-transparent border-0 border-b border-transparent focus:border-amarillo-sol pl-7 pr-0 text-text-on-dark font-body-md placeholder:text-gray-500 transition-colors focus:ring-0 py-1 text-body-lg" placeholder="Map link or coordinates" type="text" value="maps.google.com/?q=890+West+Ave">
+</div>
+</div>
+<button class="mt-sm w-full bg-amarillo-sol text-text-on-light font-headline-md text-[14px] py-3 rounded-lg flex items-center justify-center gap-sm active:opacity-80 transition-opacity" onclick="copyBranchInfo(this)" type="button">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 0;">content_copy</span>
+                    Copy Info
+                </button>
+</article>
+</div>
+<!-- Add New Branch Action -->
+<button class="w-full border border-amarillo-sol border-dashed rounded-xl p-lg flex flex-col items-center justify-center gap-sm text-amarillo-sol hover:bg-[#2a2a2a] active:bg-[#333333] transition-colors mb-lg" type="button">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">add_circle</span>
+<span class="font-headline-md text-[14px]">Añadir Nueva Dirección</span>
+</button>
+</main>
+<!-- BottomNavBar JSON execution -->
+<!-- Mobile Responsive Pivot applied: visible md:hidden -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 backdrop-blur-md bg-[#121212]/80 flat no shadows flex justify-around items-center px-margin-mobile pb-xs h-16 border-t border-[#333]">
+<!-- Tab 1: Shortcuts (Inactive) -->
+<button aria-label="Shortcuts" class="flex flex-col items-center justify-center text-gray-400 active:opacity-80 transition-opacity transition-all duration-200 active:scale-95 w-16"><span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">grid_view</span><span class="text-label-sm font-label-sm">QR</span></button>
+<!-- Tab 2: Share (Active - Semantic Mapping based on page title "Share Location") -->
+<button aria-current="page" aria-label="Share" class="flex flex-col items-center justify-center text-amarillo-sol active:opacity-80 transition-opacity transition-all duration-200 active:scale-95 w-16"><span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">storefront</span><span class="text-label-sm font-label-sm whitespace-nowrap">Mis Direcciones</span></button>
+</nav>
+<!-- Toast Notification (Hidden by default) -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-surface text-on-surface px-md py-sm rounded-lg font-body-md text-body-md shadow-lg transition-all duration-300 pointer-events-none z-50 flex items-center gap-sm opacity-0 translate-y-4" id="toast">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+        Copied to clipboard
+    </div>
+<script>
+        // Micro-interaction for copying data
+        function copyBranchInfo(btn) {
+            const card = btn.closest('article');
+            const inputs = card.querySelectorAll('input, textarea');
+            
+            const name = inputs[0].value || 'Unknown Branch';
+            const address = inputs[1].value || 'No address provided';
+            const mapLink = inputs[2].value || 'No map link';
+
+            const textToCopy = `Name: ${name}\nAddress: ${address}\nMaps: ${mapLink}`;
+
+            // Provide visual feedback on the button
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check</span> Copied!`;
+            btn.classList.add('bg-text-on-dark', 'text-text-on-light');
+            btn.classList.remove('bg-amarillo-sol', 'text-text-on-light');
+
+            // Show Toast
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            // Reset after delay
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('bg-text-on-dark', 'text-text-on-light');
+                btn.classList.add('bg-amarillo-sol', 'text-text-on-light');
+                
+                toast.classList.add('opacity-0', 'translate-y-4');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 2000);
+
+            // In a real app, use navigator.clipboard.writeText(textToCopy);
+            console.log("Copied:\n" + textToCopy);
+        }
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+            }
+        });
+    </script>
+
+
+
+
+
+
+
+
+</body></html>

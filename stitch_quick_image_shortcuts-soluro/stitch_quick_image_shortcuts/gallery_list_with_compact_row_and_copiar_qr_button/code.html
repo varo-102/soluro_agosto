@@ -1,0 +1,299 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Gallery List - Soluro Edition</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "background": "#f9f9f9",
+                      "surface-container-low": "#f3f3f4",
+                      "azul-profundo": "#0A2540",
+                      "primary": "#000f22",
+                      "surface-dim": "#dadada",
+                      "primary-container": "#0a2540",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed": "#2d1600",
+                      "tertiary-fixed": "#ffdcbe",
+                      "text-on-dark": "#FFFFFF",
+                      "on-primary-fixed-variant": "#314865",
+                      "surface-container-highest": "#e2e2e2",
+                      "surface": "#f9f9f9",
+                      "on-background": "#1a1c1c",
+                      "surface-variant": "#e2e2e2",
+                      "on-tertiary-container": "#ae835a",
+                      "tertiary-fixed-dim": "#eebd90",
+                      "surface-bright": "#f9f9f9",
+                      "on-secondary": "#ffffff",
+                      "primary-fixed": "#d2e4ff",
+                      "on-surface-variant": "#43474d",
+                      "outline": "#74777e",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed-variant": "#5b4300",
+                      "on-secondary-container": "#6c5000",
+                      "secondary-fixed": "#ffdf9e",
+                      "inverse-primary": "#b0c8eb",
+                      "secondary-container": "#fdc003",
+                      "secondary-fixed-dim": "#fabd00",
+                      "surface-tint": "#49607e",
+                      "surface-container-high": "#e8e8e8",
+                      "tertiary": "#1a0b00",
+                      "text-on-light": "#0A2540",
+                      "on-primary-container": "#768dad",
+                      "inverse-on-surface": "#f0f1f1",
+                      "secondary": "#785900",
+                      "inverse-surface": "#2f3131",
+                      "on-surface": "#1a1c1c",
+                      "on-secondary-fixed": "#261a00",
+                      "surface-muted": "#F1F4F9",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed": "#001c37",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "surface-container": "#eeeeee",
+                      "on-tertiary-fixed-variant": "#613f1c",
+                      "outline-variant": "#c4c6ce",
+                      "tertiary-container": "#381d00",
+                      "amarillo-sol": "#FFC107",
+                      "primary-fixed-dim": "#b0c8eb",
+                      "on-primary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "8px",
+                      "gutter": "16px",
+                      "xl": "32px",
+                      "xs": "4px",
+                      "margin-desktop": "64px",
+                      "base": "4px",
+                      "md": "16px",
+                      "margin-mobile": "20px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Geist"
+                      ],
+                      "body-md": [
+                              "Geist"
+                      ],
+                      "headline-xl": [
+                              "Geist"
+                      ],
+                      "headline-lg-mobile": [
+                              "Geist"
+                      ],
+                      "label-lg": [
+                              "Geist"
+                      ],
+                      "label-sm": [
+                              "Geist"
+                      ],
+                      "headline-lg": [
+                              "Geist"
+                      ],
+                      "headline-md": [
+                              "Geist"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-xl": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-lg": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface-muted text-on-surface antialiased min-h-screen flex flex-col relative md:pb-0 pb-20">
+<!-- Top App Bar -->
+<header class="bg-surface dark:bg-inverse-surface shadow-sm full-width top-0 fixed z-50 left-0 w-full"><div class="flex justify-between items-center px-margin-mobile h-16 w-full transition-colors duration-200 border-b border-surface-variant/50 dark:border-white/5 px-4 md:px-margin-desktop">
+<div class="flex items-center gap-2">
+<img alt="Logo" class="h-8 w-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-N2D53XqWnSIq4MVxIFKNGg9G8b4F1OInTimLgfaGIedM-Yujuonc2JEwlRPLsJTS1nv9WJCIY3bDpTWvWuKKuJ0W2FB7_m7ZDF9KnuxbbAN9p9vgJB8kD4-mFbmKyBdL-Dib4NvGx0tEqhCR9H56hN2b94LZ1bHWab7cHC87vUGFXqkE3JlOAT3kPgnn6fuYtWIao2y01tz0LKmj6yTjkYjBySFFcSpvg20xF1nHnCNIdLoOHt2WGuPGSUYaBxtfL_Uoep8H7fKqUQ">
+<h1 class="text-headline-md font-headline-md text-azul-profundo dark:text-amarillo-sol truncate px-2">QR</h1>
+</div>
+<div class="flex items-center gap-1">
+<button aria-label="QR View" class="text-azul-profundo dark:text-amarillo-sol p-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+</button>
+<button aria-label="Toggle Dark Mode" class="text-azul-profundo dark:text-amarillo-sol p-2 active:scale-95 transition-transform" id="theme-toggle">
+<span class="material-symbols-outlined dark:hidden block">dark_mode</span>
+<span class="material-symbols-outlined hidden dark:block">light_mode</span>
+</button>
+<button aria-label="Settings" class="text-azul-profundo dark:text-amarillo-sol p-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div></header>
+<!-- Main Canvas -->
+<main class="flex-grow px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto w-full flex flex-col gap-4 pb-4 pt-16">
+<div class="flex items-center justify-between">
+</div>
+<!-- Grid Layout for Cards -->
+<div class="grid grid-cols-1 gap-4">
+<!-- Card 1 -->
+<article class="bg-surface rounded-lg shadow-sm p-2 flex items-center justify-between gap-4 hover:shadow-md transition-shadow duration-300"><div class="flex flex-col w-full gap-2">
+<div class="flex items-center justify-between gap-4">
+<div class="flex flex-col gap-1 flex-grow min-w-0">
+<h3 class="font-headline-md text-headline-md text-azul-profundo truncate">Banco BISA</h3>
+<p class="font-body-md text-label-lg text-on-surface-variant truncate">Cobro Servicios</p>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-low rounded-full w-fit">
+<span class="material-symbols-outlined text-[12px] text-azul-profundo">schedule</span>
+<span class="font-label-sm text-label-sm text-azul-profundo">Expira en 2 hrs</span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="w-12 h-12 rounded border border-surface-muted flex items-center justify-center bg-white p-1">
+<img alt="QR Code" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPHe-sp_V4xBQ3SshzZKqoYD88OQ_5LLNY12m-bfD4637SEKnbJF7_5OrgyVkWbdFHG8w2FP528SADheCeXXM6pfMK-zT7m2m3aKLybbrnbvS4AjQLxEVa823k6fDcBeJhYVZs41NH-DgwaKySD_nX6-BCMMM94JiOF73he3bjbjqIxsSaKS4Xh2wuUkjRZdS6WxB9ZhTRIJgXsJ9uqxLrHBNv9woBU76ulZV8cBLQsDoYMrw-kgcXusIfIdYFVSNViQ">
+</div>
+<button aria-label="Delete" class="text-azul-profundo hover:opacity-80 active:scale-95 transition-transform p-1">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<button class="w-full bg-azul-profundo text-white font-label-lg py-2 rounded-lg flex items-center justify-center active:scale-95 transition-transform">
+Copiar QR
+</button>
+</div></article>
+<!-- Card 2 -->
+<article class="bg-surface rounded-lg shadow-sm p-2 flex items-center justify-between gap-4 hover:shadow-md transition-shadow duration-300"><div class="flex flex-col w-full gap-2">
+<div class="flex items-center justify-between gap-4">
+<div class="flex flex-col gap-1 flex-grow min-w-0">
+<h3 class="font-headline-md text-headline-md text-azul-profundo truncate">Banco Nacional de Bolivia</h3>
+<p class="font-body-md text-label-lg text-on-surface-variant truncate">Pago a Proveedores</p>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 bg-error-container rounded-full w-fit">
+<span class="material-symbols-outlined text-[12px] text-on-error-container">warning</span>
+<span class="font-label-sm text-label-sm text-on-error-container">Expira en 15 min</span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="w-12 h-12 rounded border border-surface-muted flex items-center justify-center bg-white p-1">
+<img class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPUgpXW4HABfA3WLCZWuxTGNY0gthCb7DkSnlvDiUSnGm1OWqORgCJudSEmrrgBNY8O1EILDtvuI9rZszMDHU1V2fCUiqIXS_S3bkuocSvBraQ_zBv1Pp4oWeKwDQW_SEPIcDSQL4-9MEleMPqllEVn1L3ZerhRCZCC1_Ny3jM9dz8anL_d7v2cY082JPZqWeSGkOyagmf74-E3RUQOtcfIEejaUp597SPqtEYQasAl3RpxZ-Ti7nx">
+</div>
+<button aria-label="Delete" class="text-azul-profundo hover:opacity-80 active:scale-95 transition-transform p-1">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<button class="w-full bg-azul-profundo text-white font-label-lg py-2 rounded-lg flex items-center justify-center active:scale-95 transition-transform">
+Copiar QR
+</button>
+</div></article>
+<!-- Card 3 -->
+<article class="bg-surface rounded-lg shadow-sm p-2 flex items-center justify-between gap-4 hover:shadow-md transition-shadow duration-300"><div class="flex flex-col w-full gap-2">
+<div class="flex items-center justify-between gap-4">
+<div class="flex flex-col gap-1 flex-grow min-w-0">
+<h3 class="font-headline-md text-headline-md text-azul-profundo truncate">Banco Económico</h3>
+<p class="font-body-md text-label-lg text-on-surface-variant truncate">Transferencia Interna</p>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-low rounded-full w-fit">
+<span class="material-symbols-outlined text-[12px] text-azul-profundo">schedule</span>
+<span class="font-label-sm text-label-sm text-azul-profundo">Expira en 1 día</span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="w-12 h-12 rounded border border-surface-muted flex items-center justify-center bg-white p-1">
+<img class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCn7WJ6fdh3jUj8lezesy0r6IOVFgUtPA1PEzDgK7ewQU8pquVmMYhYT_YCCwHHG3azkSSAr8MOMA5BS-H8y7XHVYRfMG90IrUnwG0e_PJU1tXL7s2AYo0KgGc7vEEKyt1ukxSpm6PQIZwmfQDLuvhcC7KcJZcBvXg_omMJX07tt-qTfJTuZrE-tXjdMakJB6qByjfPseQ3sRiYQw5ufJ1sW9mw2TUDCF99ZOX8uNUJaGTSCOE5sZj0">
+</div>
+<button aria-label="Delete" class="text-azul-profundo hover:opacity-80 active:scale-95 transition-transform p-1">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<button class="w-full bg-azul-profundo text-white font-label-lg py-2 rounded-lg flex items-center justify-center active:scale-95 transition-transform">
+Copiar QR
+</button>
+</div></article>
+<!-- Card 4 -->
+</div>
+<button class="w-full bg-amarillo-sol text-azul-profundo font-label-lg py-4 rounded-xl flex items-center justify-center gap-2 mt-4 mb-8 active:scale-95 transition-transform shadow-sm">
+<span class="material-symbols-outlined">add</span>
+<span class="">Añadir QR</span>
+</button></main>
+<!-- Floating Action Button -->
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="md:hidden bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl fixed bottom-0 left-0 w-full z-50 flex flex-col transition-colors duration-200 border-t border-surface-variant/50 dark:border-white/5 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)]"><div class="flex justify-around items-center px-margin-mobile py-sm pb-safe h-16 w-full">
+<button class="flex flex-col items-center justify-center gap-xs text-azul-profundo dark:text-amarillo-sol hover:opacity-80 transition-opacity active:opacity-80 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-label-sm font-label-sm">QR</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-xs text-secondary dark:text-secondary-fixed-dim hover:opacity-80 transition-opacity active:opacity-80 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">storefront</span>
+<span class="text-label-sm font-label-sm">Mis Direcciones</span>
+</button>
+</div></nav>
+
+
+</body></html>
