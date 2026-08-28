@@ -7,7 +7,7 @@ import '../../services/notification_service.dart';
 import '../../services/quick_actions_service.dart';
 import '../../theme/app_colors.dart';
 import 'add_qr_modal.dart';
-import 'qr_detail_dialog.dart';
+import 'full_screen_qr_viewer.dart';
 
 class QRListScreen extends StatefulWidget {
   const QRListScreen({super.key});
@@ -99,11 +99,10 @@ class QRListScreenState extends State<QRListScreen> {
   }
 
   void openQRDetail(QRCodeModel qr) {
-    showDialog(
-      context: context,
-      builder: (context) => QRDetailDialog(
-        qrCode: qr,
-        onEdit: () => _showEditModal(qr),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FullScreenQRViewer(qrCode: qr),
       ),
     );
   }

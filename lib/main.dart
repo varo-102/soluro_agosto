@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'services/database_helper.dart';
 import 'services/notification_service.dart';
 import 'services/quick_actions_service.dart';
+import 'screens/qr/full_screen_qr_viewer.dart';
 import 'theme/app_theme.dart';
 import 'screens/main_screen.dart';
 
@@ -26,6 +27,7 @@ class SoluroApp extends StatefulWidget {
 
 class _SoluroAppState extends State<SoluroApp> {
   final ValueNotifier<ThemeMode> _themeNotifier = ValueNotifier(ThemeMode.light);
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -45,9 +47,12 @@ class _SoluroAppState extends State<SoluroApp> {
 
   void _openQRFromQuickAction(int id) async {
     final qr = await DatabaseHelper().getQRCodeById(id);
-    if (qr != null && mounted) {
-      // Show detail dialog
-      // Handled gracefully in main screen context
+    if (qr != null) {
+      _navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => FullScreenQRViewer(qrCode: qr),
+        ),
+      );
     }
   }
 
@@ -57,6 +62,7 @@ class _SoluroAppState extends State<SoluroApp> {
       valueListenable: _themeNotifier,
       builder: (context, themeMode, child) {
         return MaterialApp(
+          navigatorKey: _navigatorKey,
           title: 'Soluro',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
