@@ -5,8 +5,13 @@ import '../../theme/app_colors.dart';
 
 class AddDireccionModal extends StatefulWidget {
   final VoidCallback onDireccionSaved;
+  final DireccionModel? direccionToEdit;
 
-  const AddDireccionModal({super.key, required this.onDireccionSaved});
+  const AddDireccionModal({
+    super.key,
+    required this.onDireccionSaved,
+    this.direccionToEdit,
+  });
 
   @override
   State<AddDireccionModal> createState() => _AddDireccionModalState();
@@ -20,6 +25,16 @@ class _AddDireccionModalState extends State<AddDireccionModal> {
 
   bool _isSaving = false;
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.direccionToEdit != null) {
+      _tituloController.text = widget.direccionToEdit!.titulo;
+      _detalleController.text = widget.direccionToEdit!.detalle;
+      _urlMapsController.text = widget.direccionToEdit!.urlMaps;
+    }
+  }
+
   Future<void> _saveDireccion() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -28,20 +43,30 @@ class _AddDireccionModalState extends State<AddDireccionModal> {
     });
 
     try {
-      final newDireccion = DireccionModel(
+      final isEditing = widget.direccionToEdit != null;
+      final direccion = DireccionModel(
+        id: widget.direccionToEdit?.id,
         titulo: _tituloController.text.trim(),
         detalle: _detalleController.text.trim(),
         urlMaps: _urlMapsController.text.trim(),
       );
 
-      await DatabaseHelper().insertDireccion(newDireccion);
+      if (isEditing) {
+        await DatabaseHelper().updateDireccion(direccion);
+      } else {
+        await DatabaseHelper().insertDireccion(direccion);
+      }
 
       if (mounted) {
         widget.onDireccionSaved();
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('¡Dirección guardada exitosamente!'),
+          SnackBar(
+            content: Text(
+              isEditing
+                  ? '¡Dirección actualizada exitosamente!'
+                  : '¡Dirección guardada exitosamente!',
+            ),
             backgroundColor: AppColors.azulProfundo,
           ),
         );
@@ -71,6 +96,8 @@ class _AddDireccionModalState extends State<AddDireccionModal> {
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.direccionToEdit != null;
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -88,9 +115,9 @@ class _AddDireccionModalState extends State<AddDireccionModal> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Añadir Dirección',
-                    style: TextStyle(
+                  Text(
+                    isEditing ? 'Editar Dirección' : 'Añadir Dirección',
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: AppColors.azulProfundo,
@@ -170,8 +197,12 @@ class _AddDireccionModalState extends State<AddDireccionModal> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.save),
-                label: Text(_isSaving ? 'Guardando...' : 'Guardar Dirección'),
+                    : Icon(isEditing ? Icons.check : Icons.save),
+                label: Text(
+                  _isSaving
+                      ? 'Guardando...'
+                      : (isEditing ? 'Actualizar Dirección' : 'Guardar Dirección'),
+                ),
               ),
               const SizedBox(height: 20),
             ],

@@ -10,8 +10,13 @@ import '../../theme/app_colors.dart';
 
 class AddQRModal extends StatefulWidget {
   final VoidCallback onQRSaved;
+  final QRCodeModel? qrToEdit;
 
-  const AddQRModal({super.key, required this.onQRSaved});
+  const AddQRModal({
+    super.key,
+    required this.onQRSaved,
+    this.qrToEdit,
+  });
 
   @override
   State<AddQRModal> createState() => _AddQRModalState();
@@ -25,6 +30,22 @@ class _AddQRModalState extends State<AddQRModal> {
   File? _selectedImage;
   DateTime _expirationDate = DateTime.now().add(const Duration(days: 15));
   bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.qrToEdit != null) {
+      _bancoController.text = widget.qrToEdit!.banco;
+      _referenciaController.text = widget.qrToEdit!.referencia;
+      _expirationDate = widget.qrToEdit!.fechaExpiracion;
+      if (widget.qrToEdit!.rutaImagen.isNotEmpty) {
+        final existingFile = File(widget.qrToEdit!.rutaImagen);
+        if (existingFile.existsSync()) {
+          _selectedImage = existingFile;
+        }
+      }
+    }
+  }
 
   Future<void> _pickImage() async {
     try {
@@ -51,7 +72,7 @@ class _AddQRModalState extends State<AddQRModal> {
     final picked = await showDatePicker(
       context: context,
       initialDate: _expirationDate,
-      firstDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now().add(const Duration(days: 365 * 3)),
       builder: (context, child) {
         return Theme(
@@ -77,7 +98,8 @@ class _AddQRModalState extends State<AddQRModal> {
   Future<void> _saveQR() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if (_selectedImage == null) {
+    if (_selectedImage == null &&
+        (widget.qrToEdit == null || widget.qrToEdit!.rutaImagen.isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, selecciona una imagen del QR')),
       );
@@ -89,31 +111,47 @@ class _AddQRModalState extends State<AddQRModal> {
     });
 
     try {
-      // Copy image to private app directory
-      final appDir = await getApplicationDocumentsDirectory();
-      final qrDir = Directory(p.join(appDir.path, 'qr_images'));
-      if (!await qrDir.exists()) {
-        await qrDir.create(recursive: true);
+      final isEditing = widget.qrToEdit != null;
+      String imagePath = widget.qrToEdit?.rutaImagen ?? '';
+
+      // Copy image to private app directory if a new file was selected
+      if (_selectedImage != null &&
+          (widget.qrToEdit == null || _selectedImage!.path != widget.qrToEdit!.rutaImagen)) {
+        final appDir = await getApplicationDocumentsDirectory();
+        final qrDir = Directory(p.join(appDir.path, 'qr_images'));
+        if (!await qrDir.exists()) {
+          await qrDir.create(recursive: true);
+        }
+
+        final fileName =
+            'qr_${DateTime.now().millisecondsSinceEpoch}${p.extension(_selectedImage!.path)}';
+        final savedImage =
+            await _selectedImage!.copy(p.join(qrDir.path, fileName));
+        imagePath = savedImage.path;
       }
 
-      final fileName = 'qr_${DateTime.now().millisecondsSinceEpoch}${p.extension(_selectedImage!.path)}';
-      final savedImage = await _selectedImage!.copy(p.join(qrDir.path, fileName));
-
-      final newQR = QRCodeModel(
+      final qrCode = QRCodeModel(
+        id: widget.qrToEdit?.id,
         banco: _bancoController.text.trim(),
         referencia: _referenciaController.text.trim(),
         fechaExpiracion: _expirationDate,
-        rutaImagen: savedImage.path,
+        rutaImagen: imagePath,
       );
 
-      await DatabaseHelper().insertQRCode(newQR);
+      if (isEditing) {
+        await DatabaseHelper().updateQRCode(qrCode);
+      } else {
+        await DatabaseHelper().insertQRCode(qrCode);
+      }
 
       if (mounted) {
         widget.onQRSaved();
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('¡QR guardado exitosamente!'),
+          SnackBar(
+            content: Text(
+              isEditing ? '¡QR actualizado exitosamente!' : '¡QR guardado exitosamente!',
+            ),
             backgroundColor: AppColors.azulProfundo,
           ),
         );
@@ -144,6 +182,7 @@ class _AddQRModalState extends State<AddQRModal> {
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd/MM/yyyy');
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isEditing = widget.qrToEdit != null;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -162,9 +201,9 @@ class _AddQRModalState extends State<AddQRModal> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Añadir Nuevo QR',
-                    style: TextStyle(
+                  Text(
+                    isEditing ? 'Editar Código QR' : 'Añadir Nuevo QR',
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: AppColors.azulProfundo,
@@ -317,8 +356,12 @@ class _AddQRModalState extends State<AddQRModal> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.save),
-                label: Text(_isSaving ? 'Guardando...' : 'Guardar QR'),
+                    : Icon(isEditing ? Icons.check : Icons.save),
+                label: Text(
+                  _isSaving
+                      ? 'Guardando...'
+                      : (isEditing ? 'Actualizar QR' : 'Guardar QR'),
+                ),
               ),
               const SizedBox(height: 20),
             ],

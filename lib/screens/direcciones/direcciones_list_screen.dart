@@ -97,6 +97,21 @@ class _DireccionesListScreenState extends State<DireccionesListScreen> {
     );
   }
 
+  void _showEditModal(DireccionModel direccion) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => AddDireccionModal(
+        direccionToEdit: direccion,
+        onDireccionSaved: loadDirecciones,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -219,11 +234,23 @@ class _DireccionesListScreenState extends State<DireccionesListScreen> {
                                         ],
                                       ),
                                     ),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete_outline, size: 22),
-                                      color: Colors.grey.shade600,
-                                      onPressed: () => _deleteDireccion(dir.id!),
-                                    ),
+                                     Row(
+                                       mainAxisSize: MainAxisSize.min,
+                                       children: [
+                                         IconButton(
+                                           icon: const Icon(Icons.edit_outlined, size: 22),
+                                           color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                                           tooltip: 'Editar',
+                                           onPressed: () => _showEditModal(dir),
+                                         ),
+                                         IconButton(
+                                           icon: const Icon(Icons.delete_outline, size: 22),
+                                           color: Colors.grey.shade600,
+                                           tooltip: 'Eliminar',
+                                           onPressed: () => _deleteDireccion(dir.id!),
+                                         ),
+                                       ],
+                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),

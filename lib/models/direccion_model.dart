@@ -30,7 +30,7 @@ class DireccionModel {
   }
 
   /// Format specified by requirements for [Copy Info]:
-  /// text: <titulo>\n<detalle>\n<url_maps>
+  /// text: `titulo` \n `detalle` \n `url_maps`
   String get formattedCopyText {
     return '$titulo\n$detalle\n$urlMaps';
   }

@@ -92,6 +92,16 @@ class DatabaseHelper {
     return null;
   }
 
+  Future<int> updateQRCode(QRCodeModel qrCode) async {
+    final db = await database;
+    return await db.update(
+      'qr_codes',
+      qrCode.toMap(),
+      where: 'id = ?',
+      whereArgs: [qrCode.id],
+    );
+  }
+
   Future<int> deleteQRCode(int id) async {
     final db = await database;
     return await db.delete('qr_codes', where: 'id = ?', whereArgs: [id]);
@@ -102,6 +112,16 @@ class DatabaseHelper {
   Future<int> insertDireccion(DireccionModel direccion) async {
     final db = await database;
     return await db.insert('direcciones', direccion.toMap());
+  }
+
+  Future<int> updateDireccion(DireccionModel direccion) async {
+    final db = await database;
+    return await db.update(
+      'direcciones',
+      direccion.toMap(),
+      where: 'id = ?',
+      whereArgs: [direccion.id],
+    );
   }
 
   Future<List<DireccionModel>> getDirecciones() async {

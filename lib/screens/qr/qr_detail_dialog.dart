@@ -6,8 +6,13 @@ import '../../theme/app_colors.dart';
 
 class QRDetailDialog extends StatelessWidget {
   final QRCodeModel qrCode;
+  final VoidCallback? onEdit;
 
-  const QRDetailDialog({super.key, required this.qrCode});
+  const QRDetailDialog({
+    super.key,
+    required this.qrCode,
+    this.onEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -109,36 +114,61 @@ class QRDetailDialog extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Copiar QR Button
-            ElevatedButton.icon(
-              onPressed: () async {
-                if (hasFile) {
-                  final copied = await ClipboardService.copyImageToClipboard(qrCode.rutaImagen);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          copied
-                              ? '¡Imagen QR copiada al portapapeles!'
-                              : 'Se inició la acción de compartir QR',
-                        ),
-                        backgroundColor: AppColors.azulProfundo,
+            // Action Buttons: Edit and Copy
+            Row(
+              children: [
+                if (onEdit != null) ...[
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onEdit!();
+                      },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.azulProfundo,
+                        side: const BorderSide(color: AppColors.azulProfundo),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                    );
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('No hay archivo de imagen para copiar')),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.azulProfundo,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              icon: const Icon(Icons.copy),
-              label: const Text('Copiar QR'),
+                      icon: const Icon(Icons.edit_outlined, size: 18),
+                      label: const Text('Editar'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                ],
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      if (hasFile) {
+                        final copied =
+                            await ClipboardService.copyImageToClipboard(qrCode.rutaImagen);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                copied
+                                    ? '¡Imagen QR copiada al portapapeles!'
+                                    : 'Se inició la acción de compartir QR',
+                              ),
+                              backgroundColor: AppColors.azulProfundo,
+                            ),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('No hay archivo de imagen para copiar')),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.azulProfundo,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    icon: const Icon(Icons.copy, size: 18),
+                    label: const Text('Copiar QR'),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
