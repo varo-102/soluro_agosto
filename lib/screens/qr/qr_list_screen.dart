@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../models/qr_code_model.dart';
+import '../../repositories/data_repository.dart';
+import '../../repositories/repository_provider.dart';
 import '../../services/clipboard_service.dart';
-import '../../services/database_helper.dart';
 import '../../services/notification_service.dart';
 import '../../services/quick_actions_service.dart';
 import '../../theme/app_colors.dart';
@@ -10,13 +11,16 @@ import 'add_qr_modal.dart';
 import 'full_screen_qr_viewer.dart';
 
 class QRListScreen extends StatefulWidget {
-  const QRListScreen({super.key});
+  final DataRepository? repository;
+
+  const QRListScreen({super.key, this.repository});
 
   @override
   State<QRListScreen> createState() => QRListScreenState();
 }
 
 class QRListScreenState extends State<QRListScreen> {
+  DataRepository get _repository => widget.repository ?? RepositoryProvider.instance;
   List<QRCodeModel> _qrList = [];
   bool _isLoading = true;
 
@@ -31,7 +35,7 @@ class QRListScreenState extends State<QRListScreen> {
       _isLoading = true;
     });
 
-    final list = await DatabaseHelper().getQRCodes();
+    final list = await _repository.getQRCodes();
 
     setState(() {
       _qrList = list;
@@ -43,7 +47,7 @@ class QRListScreenState extends State<QRListScreen> {
     NotificationService().checkExpirationNotifications(list);
   }
 
-  Future<void> _deleteQR(int id) async {
+  Future<void> _deleteQR(String id) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -64,7 +68,7 @@ class QRListScreenState extends State<QRListScreen> {
     );
 
     if (confirm == true) {
-      await DatabaseHelper().deleteQRCode(id);
+      await _repository.deleteQRCode(id);
       loadQRCodes();
     }
   }
@@ -79,6 +83,7 @@ class QRListScreenState extends State<QRListScreen> {
       ),
       builder: (context) => AddQRModal(
         onQRSaved: loadQRCodes,
+        repository: _repository,
       ),
     );
   }
@@ -94,6 +99,7 @@ class QRListScreenState extends State<QRListScreen> {
       builder: (context) => AddQRModal(
         qrToEdit: qr,
         onQRSaved: loadQRCodes,
+        repository: _repository,
       ),
     );
   }
@@ -295,24 +301,24 @@ class QRListScreenState extends State<QRListScreen> {
                                         ),
                                       ),
 
-                                       // Edit & Delete Actions
-                                       Row(
-                                         mainAxisSize: MainAxisSize.min,
-                                         children: [
-                                           IconButton(
-                                             icon: const Icon(Icons.edit_outlined, size: 22),
-                                             color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                                             tooltip: 'Editar QR',
-                                             onPressed: () => _showEditModal(qr),
-                                           ),
-                                           IconButton(
-                                             icon: const Icon(Icons.delete_outline, size: 22),
-                                             color: Colors.grey.shade600,
-                                             tooltip: 'Eliminar QR',
-                                             onPressed: () => _deleteQR(qr.id!),
-                                           ),
-                                         ],
-                                       ),
+                                      // Edit & Delete Actions
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.edit_outlined, size: 22),
+                                            color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                                            tooltip: 'Editar QR',
+                                            onPressed: () => _showEditModal(qr),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete_outline, size: 22),
+                                            color: Colors.grey.shade600,
+                                            tooltip: 'Eliminar QR',
+                                            onPressed: () => _deleteQR(qr.id),
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 14),

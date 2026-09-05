@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/direccion_model.dart';
+import '../../repositories/data_repository.dart';
+import '../../repositories/repository_provider.dart';
 import '../../services/clipboard_service.dart';
-import '../../services/database_helper.dart';
 import '../../theme/app_colors.dart';
 import 'add_direccion_modal.dart';
 
 class DireccionesListScreen extends StatefulWidget {
-  const DireccionesListScreen({super.key});
+  final DataRepository? repository;
+
+  const DireccionesListScreen({super.key, this.repository});
 
   @override
   State<DireccionesListScreen> createState() => _DireccionesListScreenState();
 }
 
 class _DireccionesListScreenState extends State<DireccionesListScreen> {
+  DataRepository get _repository => widget.repository ?? RepositoryProvider.instance;
   List<DireccionModel> _direccionesList = [];
   bool _isLoading = true;
 
@@ -28,7 +32,7 @@ class _DireccionesListScreenState extends State<DireccionesListScreen> {
       _isLoading = true;
     });
 
-    final list = await DatabaseHelper().getDirecciones();
+    final list = await _repository.getDirecciones();
 
     setState(() {
       _direccionesList = list;
@@ -36,7 +40,7 @@ class _DireccionesListScreenState extends State<DireccionesListScreen> {
     });
   }
 
-  Future<void> _deleteDireccion(int id) async {
+  Future<void> _deleteDireccion(String id) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -57,7 +61,7 @@ class _DireccionesListScreenState extends State<DireccionesListScreen> {
     );
 
     if (confirm == true) {
-      await DatabaseHelper().deleteDireccion(id);
+      await _repository.deleteDireccion(id);
       loadDirecciones();
     }
   }
@@ -93,6 +97,7 @@ class _DireccionesListScreenState extends State<DireccionesListScreen> {
       ),
       builder: (context) => AddDireccionModal(
         onDireccionSaved: loadDirecciones,
+        repository: _repository,
       ),
     );
   }
@@ -108,6 +113,7 @@ class _DireccionesListScreenState extends State<DireccionesListScreen> {
       builder: (context) => AddDireccionModal(
         direccionToEdit: direccion,
         onDireccionSaved: loadDirecciones,
+        repository: _repository,
       ),
     );
   }
@@ -234,23 +240,23 @@ class _DireccionesListScreenState extends State<DireccionesListScreen> {
                                         ],
                                       ),
                                     ),
-                                     Row(
-                                       mainAxisSize: MainAxisSize.min,
-                                       children: [
-                                         IconButton(
-                                           icon: const Icon(Icons.edit_outlined, size: 22),
-                                           color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                                           tooltip: 'Editar',
-                                           onPressed: () => _showEditModal(dir),
-                                         ),
-                                         IconButton(
-                                           icon: const Icon(Icons.delete_outline, size: 22),
-                                           color: Colors.grey.shade600,
-                                           tooltip: 'Eliminar',
-                                           onPressed: () => _deleteDireccion(dir.id!),
-                                         ),
-                                       ],
-                                     ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.edit_outlined, size: 22),
+                                          color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                                          tooltip: 'Editar',
+                                          onPressed: () => _showEditModal(dir),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete_outline, size: 22),
+                                          color: Colors.grey.shade600,
+                                          tooltip: 'Eliminar',
+                                          onPressed: () => _deleteDireccion(dir.id),
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),

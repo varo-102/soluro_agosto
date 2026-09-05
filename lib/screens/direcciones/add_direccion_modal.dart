@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import '../../models/direccion_model.dart';
-import '../../services/database_helper.dart';
+import '../../models/sync_status.dart';
+import '../../repositories/data_repository.dart';
+import '../../repositories/repository_provider.dart';
 import '../../theme/app_colors.dart';
 
 class AddDireccionModal extends StatefulWidget {
   final VoidCallback onDireccionSaved;
   final DireccionModel? direccionToEdit;
+  final DataRepository? repository;
 
   const AddDireccionModal({
     super.key,
     required this.onDireccionSaved,
     this.direccionToEdit,
+    this.repository,
   });
 
   @override
@@ -18,6 +22,8 @@ class AddDireccionModal extends StatefulWidget {
 }
 
 class _AddDireccionModalState extends State<AddDireccionModal> {
+  DataRepository get _repository => widget.repository ?? RepositoryProvider.instance;
+
   final _formKey = GlobalKey<FormState>();
   final _tituloController = TextEditingController();
   final _detalleController = TextEditingController();
@@ -44,18 +50,22 @@ class _AddDireccionModalState extends State<AddDireccionModal> {
 
     try {
       final isEditing = widget.direccionToEdit != null;
-      final direccion = DireccionModel(
-        id: widget.direccionToEdit?.id,
-        titulo: _tituloController.text.trim(),
-        detalle: _detalleController.text.trim(),
-        urlMaps: _urlMapsController.text.trim(),
-      );
+      final direccion = isEditing
+          ? widget.direccionToEdit!.copyWith(
+              titulo: _tituloController.text.trim(),
+              detalle: _detalleController.text.trim(),
+              urlMaps: _urlMapsController.text.trim(),
+              updatedAt: DateTime.now(),
+              isSynced: false,
+              syncStatus: SyncStatus.pending,
+            )
+          : DireccionModel(
+              titulo: _tituloController.text.trim(),
+              detalle: _detalleController.text.trim(),
+              urlMaps: _urlMapsController.text.trim(),
+            );
 
-      if (isEditing) {
-        await DatabaseHelper().updateDireccion(direccion);
-      } else {
-        await DatabaseHelper().insertDireccion(direccion);
-      }
+      await _repository.saveDireccion(direccion);
 
       if (mounted) {
         widget.onDireccionSaved();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'repositories/repository_provider.dart';
 import 'services/database_helper.dart';
 import 'services/notification_service.dart';
 import 'services/quick_actions_service.dart';
@@ -36,17 +37,16 @@ class _SoluroAppState extends State<SoluroApp> {
     // Initialize Quick Actions handler
     QuickActionsService().init((actionType) {
       if (actionType.startsWith('qr_')) {
-        final idStr = actionType.replaceAll('qr_', '');
-        final id = int.tryParse(idStr);
-        if (id != null) {
+        final id = actionType.replaceAll('qr_', '');
+        if (id.isNotEmpty) {
           _openQRFromQuickAction(id);
         }
       }
     });
   }
 
-  void _openQRFromQuickAction(int id) async {
-    final qr = await DatabaseHelper().getQRCodeById(id);
+  void _openQRFromQuickAction(String id) async {
+    final qr = await RepositoryProvider.instance.getQRCodeById(id);
     if (qr != null) {
       _navigatorKey.currentState?.push(
         MaterialPageRoute(

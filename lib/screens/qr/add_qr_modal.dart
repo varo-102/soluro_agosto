@@ -5,17 +5,21 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import '../../models/qr_code_model.dart';
-import '../../services/database_helper.dart';
+import '../../models/sync_status.dart';
+import '../../repositories/data_repository.dart';
+import '../../repositories/repository_provider.dart';
 import '../../theme/app_colors.dart';
 
 class AddQRModal extends StatefulWidget {
   final VoidCallback onQRSaved;
   final QRCodeModel? qrToEdit;
+  final DataRepository? repository;
 
   const AddQRModal({
     super.key,
     required this.onQRSaved,
     this.qrToEdit,
+    this.repository,
   });
 
   @override
@@ -23,6 +27,8 @@ class AddQRModal extends StatefulWidget {
 }
 
 class _AddQRModalState extends State<AddQRModal> {
+  DataRepository get _repository => widget.repository ?? RepositoryProvider.instance;
+
   final _formKey = GlobalKey<FormState>();
   final _bancoController = TextEditingController();
   final _referenciaController = TextEditingController();
@@ -130,19 +136,24 @@ class _AddQRModalState extends State<AddQRModal> {
         imagePath = savedImage.path;
       }
 
-      final qrCode = QRCodeModel(
-        id: widget.qrToEdit?.id,
-        banco: _bancoController.text.trim(),
-        referencia: _referenciaController.text.trim(),
-        fechaExpiracion: _expirationDate,
-        rutaImagen: imagePath,
-      );
+      final qrCode = isEditing
+          ? widget.qrToEdit!.copyWith(
+              banco: _bancoController.text.trim(),
+              referencia: _referenciaController.text.trim(),
+              fechaExpiracion: _expirationDate,
+              rutaImagen: imagePath,
+              updatedAt: DateTime.now(),
+              isSynced: false,
+              syncStatus: SyncStatus.pending,
+            )
+          : QRCodeModel(
+              banco: _bancoController.text.trim(),
+              referencia: _referenciaController.text.trim(),
+              fechaExpiracion: _expirationDate,
+              rutaImagen: imagePath,
+            );
 
-      if (isEditing) {
-        await DatabaseHelper().updateQRCode(qrCode);
-      } else {
-        await DatabaseHelper().insertQRCode(qrCode);
-      }
+      await _repository.saveQRCode(qrCode);
 
       if (mounted) {
         widget.onQRSaved();

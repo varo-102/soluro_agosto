@@ -31,13 +31,13 @@ class NotificationService {
       final days = qr.daysRemaining;
       if (days == 7 || days == 5 || days == 3) {
         await _showNotification(
-          id: qr.id ?? qr.banco.hashCode,
+          id: qr.id.hashCode,
           title: '⚠️ QR Próximo a Expirar',
           body: 'El QR de ${qr.banco} (${qr.referencia}) expira en $days días.',
         );
       } else if (days <= 0) {
         await _showNotification(
-          id: qr.id ?? qr.banco.hashCode,
+          id: qr.id.hashCode,
           title: '🚨 QR Expirado',
           body: 'El QR de ${qr.banco} (${qr.referencia}) ha expirado.',
         );
