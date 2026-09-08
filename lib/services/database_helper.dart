@@ -6,6 +6,9 @@ import 'package:uuid/uuid.dart';
 import '../models/qr_code_model.dart';
 import '../models/direccion_model.dart';
 import '../models/sync_status.dart';
+import '../models/cotizacion_model.dart';
+import '../models/articulo_cotizacion_model.dart';
+import '../models/imagen_cotizacion_model.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -32,14 +35,14 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    await _createTablesV2(db);
+    await _createTablesV3(db);
 
     final now = DateTime.now();
     final nowIso = now.toIso8601String();
@@ -110,11 +113,55 @@ class DatabaseHelper {
     ''');
   }
 
+  Future<void> _createTablesV3(DatabaseExecutor db) async {
+    await _createTablesV2(db);
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS cotizaciones(
+        id TEXT PRIMARY KEY NOT NULL,
+        titulo TEXT NOT NULL,
+        fecha_creacion TEXT NOT NULL,
+        fecha_modificacion TEXT NOT NULL,
+        notas_adicionales TEXT NOT NULL,
+        is_synced INTEGER NOT NULL DEFAULT 0,
+        sync_status TEXT NOT NULL DEFAULT 'pending',
+        last_synced_at TEXT,
+        is_deleted INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS cotizacion_articulos(
+        id TEXT PRIMARY KEY NOT NULL,
+        cotizacion_id TEXT NOT NULL,
+        descripcion TEXT NOT NULL,
+        precio REAL NOT NULL,
+        cantidad REAL NOT NULL,
+        FOREIGN KEY (cotizacion_id) REFERENCES cotizaciones (id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS cotizacion_imagenes(
+        id TEXT PRIMARY KEY NOT NULL,
+        cotizacion_id TEXT NOT NULL,
+        ruta_local TEXT NOT NULL,
+        FOREIGN KEY (cotizacion_id) REFERENCES cotizaciones (id) ON DELETE CASCADE
+      )
+    ''');
+  }
+
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      // Migración segura de V1 (IDs int auto-incrementales) a V2 (UUID String + campos sync)
       await _migrateToV2(db);
     }
+    if (oldVersion < 3) {
+      await _migrateToV3(db);
+    }
+  }
+
+  Future<void> _migrateToV3(Database db) async {
+    await _createTablesV3(db);
   }
 
   Future<void> _migrateToV2(Database db) async {
@@ -290,5 +337,88 @@ class DatabaseHelper {
   Future<int> hardDeleteDireccion(String id) async {
     final db = await database;
     return await db.delete('direcciones', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // --- COTIZACIONES CRUD ---
+
+  Future<void> insertCotizacionCompleta(
+    CotizacionModel cotizacion,
+    List<ArticuloCotizacionModel> articulos,
+    List<ImagenCotizacionModel> imagenes,
+  ) async {
+    final db = await database;
+    await db.transaction((txn) async {
+      await txn.insert(
+        'cotizaciones',
+        cotizacion.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      await txn.delete('cotizacion_articulos', where: 'cotizacion_id = ?', whereArgs: [cotizacion.id]);
+      for (var art in articulos) {
+        await txn.insert('cotizacion_articulos', art.toMap());
+      }
+
+      await txn.delete('cotizacion_imagenes', where: 'cotizacion_id = ?', whereArgs: [cotizacion.id]);
+      for (var img in imagenes) {
+        await txn.insert('cotizacion_imagenes', img.toMap());
+      }
+    });
+  }
+
+  Future<List<CotizacionModel>> getCotizaciones({bool includeDeleted = false}) async {
+    final db = await database;
+    final maps = await db.query(
+      'cotizaciones',
+      where: includeDeleted ? null : 'is_deleted = 0',
+      orderBy: 'fecha_modificacion DESC',
+    );
+    return maps.map((map) => CotizacionModel.fromMap(map)).toList();
+  }
+
+  Future<CotizacionModel?> getCotizacionById(String id) async {
+    final db = await database;
+    final maps = await db.query('cotizaciones', where: 'id = ?', whereArgs: [id]);
+    if (maps.isNotEmpty) {
+      return CotizacionModel.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  Future<List<ArticuloCotizacionModel>> getArticulosPorCotizacion(String cotizacionId) async {
+    final db = await database;
+    final maps = await db.query('cotizacion_articulos', where: 'cotizacion_id = ?', whereArgs: [cotizacionId]);
+    return maps.map((map) => ArticuloCotizacionModel.fromMap(map)).toList();
+  }
+
+  Future<List<ImagenCotizacionModel>> getImagenesPorCotizacion(String cotizacionId) async {
+    final db = await database;
+    final maps = await db.query('cotizacion_imagenes', where: 'cotizacion_id = ?', whereArgs: [cotizacionId]);
+    return maps.map((map) => ImagenCotizacionModel.fromMap(map)).toList();
+  }
+
+  Future<int> softDeleteCotizacion(String id) async {
+    final db = await database;
+    final nowIso = DateTime.now().toIso8601String();
+    return await db.update(
+      'cotizaciones',
+      {
+        'is_deleted': 1,
+        'fecha_modificacion': nowIso,
+        'is_synced': 0,
+        'sync_status': SyncStatus.pending.toValue(),
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> hardDeleteCotizacion(String id) async {
+    final db = await database;
+    await db.transaction((txn) async {
+      await txn.delete('cotizacion_articulos', where: 'cotizacion_id = ?', whereArgs: [id]);
+      await txn.delete('cotizacion_imagenes', where: 'cotizacion_id = ?', whereArgs: [id]);
+      await txn.delete('cotizaciones', where: 'id = ?', whereArgs: [id]);
+    });
   }
 }

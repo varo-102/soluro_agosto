@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'repositories/repository_provider.dart';
 import 'services/database_helper.dart';
 import 'services/notification_service.dart';
@@ -12,6 +13,9 @@ void main() async {
 
   // Initialize Local Notifications
   await NotificationService().init();
+
+  // Initialize date formatting for Spanish locale
+  await initializeDateFormatting('es_ES', null);
 
   // Pre-initialize Database
   await DatabaseHelper().database;

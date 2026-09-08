@@ -1,5 +1,8 @@
 import '../models/direccion_model.dart';
 import '../models/qr_code_model.dart';
+import '../models/cotizacion_model.dart';
+import '../models/articulo_cotizacion_model.dart';
+import '../models/imagen_cotizacion_model.dart';
 import 'data_repository.dart';
 import 'local_data_repository.dart';
 
@@ -85,5 +88,41 @@ class SyncDataRepository implements DataRepository {
     // Aplica borrado lógico localmente
     await _localRepo.deleteDireccion(id);
     // unawaited(syncDirecciones());
+  }
+
+  // --- COTIZACIONES ---
+
+  @override
+  Future<List<CotizacionModel>> getCotizaciones({bool includeDeleted = false}) {
+    return _localRepo.getCotizaciones(includeDeleted: includeDeleted);
+  }
+
+  @override
+  Future<CotizacionModel?> getCotizacionById(String id) {
+    return _localRepo.getCotizacionById(id);
+  }
+
+  @override
+  Future<void> saveCotizacionCompleta(
+    CotizacionModel cotizacion,
+    List<ArticuloCotizacionModel> articulos,
+    List<ImagenCotizacionModel> imagenes,
+  ) async {
+    await _localRepo.saveCotizacionCompleta(cotizacion, articulos, imagenes);
+  }
+
+  @override
+  Future<void> deleteCotizacion(String id) async {
+    await _localRepo.deleteCotizacion(id);
+  }
+
+  @override
+  Future<List<ArticuloCotizacionModel>> getArticulosPorCotizacion(String cotizacionId) {
+    return _localRepo.getArticulosPorCotizacion(cotizacionId);
+  }
+
+  @override
+  Future<List<ImagenCotizacionModel>> getImagenesPorCotizacion(String cotizacionId) {
+    return _localRepo.getImagenesPorCotizacion(cotizacionId);
   }
 }

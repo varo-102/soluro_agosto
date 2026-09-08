@@ -1,0 +1,326 @@
+<!DOCTYPE html><html class="h-full bg-slate-100" lang="es" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Vista Previa PDF - Cotización 1 | Soluro</title>
+<!-- Tailwind CSS v3 CDN with forms and container-queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            soluro: {
+              navy: '#0A2540',
+              'navy-dark': '#061729',
+              'navy-light': '#16385d',
+              gold: '#FFC107',
+              'gold-hover': '#e0a800',
+              accent: '#F4F7FA'
+            }
+          },
+          fontFamily: {
+            sans: ['Geist', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          boxShadow: {
+            'sheet': '0 12px 36px rgba(10, 37, 64, 0.09), 0 3px 10px rgba(0, 0, 0, 0.04)',
+          }
+        }
+      }
+    }
+  </script>
+<!-- Typography Styles -->
+<style data-purpose="typography">
+    @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+<!-- Custom Print & Watermark Styles -->
+<style data-purpose="watermark-and-print">
+    .watermark-overlay {
+      pointer-events: none;
+      background-image: radial-gradient(#0A2540 0.75px, transparent 0.75px);
+      background-size: 20px 20px;
+      opacity: 0.035;
+    }
+    
+    .diagonal-watermark {
+      pointer-events: none;
+      user-select: none;
+      transform: translate(-50%, -50%) rotate(-25deg);
+    }
+
+    .ios-scroll {
+      -webkit-overflow-scrolling: touch;
+    }
+  </style>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+</head>
+<body class="h-full flex flex-col bg-slate-100 text-slate-800 antialiased selection:bg-amber-100 selection:text-soluro-navy">
+<!-- BEGIN: TopBar -->
+<header class="sticky top-0 z-30 bg-soluro-navy text-white shadow-md border-b border-soluro-navy-dark px-4 py-3 shrink-0" data-purpose="app-header">
+<div class="max-w-md mx-auto flex items-center justify-between">
+<!-- Back Navigation -->
+<button aria-label="Regresar" class="flex items-center gap-1.5 text-xs font-semibold text-slate-200 hover:text-white transition-colors py-1 px-2 -ml-2 rounded-lg active:bg-white/10" type="button">
+<svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="">Volver</span>
+</button>
+<!-- Screen Title -->
+<div class="text-center">
+<h1 class="text-sm font-bold tracking-tight text-white flex items-center justify-center gap-1.5">
+<svg class="w-3.5 h-3.5 text-soluro-gold" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM16 18H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"></path>
+</svg>
+        Vista Previa PDF
+      </h1>
+<p class="text-[10px] text-slate-300 font-medium leading-none mt-0.5">COT-2023-001</p>
+</div>
+<!-- Quick Document Utilities -->
+<div class="flex items-center gap-1.5">
+
+<button class="p-1.5 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 active:bg-white/20 transition-colors" title="Descargar" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</div>
+</header>
+<!-- END: TopBar -->
+<!-- BEGIN: MainContentArea -->
+<main class="flex-1 overflow-y-auto ios-scroll px-3 py-4 sm:px-6 pb-28">
+<div class="max-w-md mx-auto space-y-3">
+<!-- Document Sheet Container (Formal Invoice Architecture) -->
+<article class="relative bg-white rounded-xl shadow-sheet border border-slate-200/90 overflow-hidden" data-purpose="pdf-document-sheet">
+<!-- Subtle Grid Watermark Layer -->
+<div class="absolute inset-0 watermark-overlay"></div>
+<!-- High-Impact Soluro Watermark -->
+<div aria-hidden="true" class="diagonal-watermark absolute top-1/2 left-1/2 select-none pointer-events-none z-0 text-center opacity-[0.05]">
+<div class="flex items-center justify-center mb-1">
+<svg class="w-36 h-36 text-soluro-navy" fill="currentColor" viewBox="0 0 200 120">
+<path d="M100,5 C108,5 110,25 100,25 C90,25 92,5 100,5 Z"></path>
+<path d="M135,18 C141,23 133,40 125,35 C117,30 129,13 135,18 Z"></path>
+<path d="M165,52 C168,60 149,70 143,62 C137,54 162,44 165,52 Z"></path>
+<path d="M65,18 C71,13 83,30 75,35 C67,40 59,23 65,18 Z"></path>
+<path d="M35,52 C38,44 63,54 57,62 C51,70 32,60 35,52 Z"></path>
+<path d="M40,75 C70,40 130,40 160,75 C120,70 80,70 40,75 Z"></path>
+</svg>
+</div>
+<span class="text-7xl font-black tracking-[0.25em] text-soluro-navy font-sans uppercase">SOLURO</span>
+<p class="text-xs tracking-[0.4em] text-soluro-navy font-bold uppercase mt-1">DOCUMENTO OFICIAL</p>
+</div>
+<!-- Content Layer -->
+<div class="relative z-10 p-3.5 sm:p-5">
+<!-- BEGIN: DocumentHeader (Formal Split Header Layout) -->
+<section class="border-b border-slate-200 pb-3 mb-3" data-purpose="document-header">
+<div class="flex items-start justify-between gap-2">
+<!-- Left Header: Brand Logo & Title -->
+<div class="flex flex-col items-start">
+<img alt="Soluro Logo" class="h-6 w-auto object-contain mb-1.5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2AMrUkS3uy1t7Uqf3spGKmoxpumO8v1x0uBAKs9tvmnO12dlc8ldpMASLcfFLCvDxgMkE9vQITBMjdScmNVQ4E5YQoZysmLLtJ9xVYhuuwoE8JAPO_5xjYuJeOKVyYBLQty7s7hg7b8sn99D8PYLJU3g0LNr9KGYs0s_9NPkjAVMC2KAqdHmvlJSoeb-wtVr5wcGqNaAORqFTE6KipYuyhxP0uhOntq3GVYKWoFJ8aq2FRRq0bnZqZhzukcJ3RRUUZg">
+<div class="flex items-center gap-1.5">
+<span class="inline-block w-1.5 h-3.5 bg-soluro-gold rounded-full"></span>
+<h2 class="text-base font-extrabold tracking-tight text-soluro-navy leading-none uppercase">COTIZACIÓN 1</h2>
+</div>
+</div>
+<!-- Right Header: Official Badge, Folio & Modified Date -->
+<div class="flex flex-col items-end text-right shrink-0">
+<div class="bg-soluro-navy text-white px-2 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase flex items-center gap-1 shadow-sm">
+<span class="">COT-2023-001</span>
+</div>
+<div class="inline-flex items-center gap-1 mt-1 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/80 text-[9px] text-slate-500 font-medium">
+<span class="uppercase font-bold text-[8px] tracking-wider text-slate-600">Modificado:</span>
+<span class="text-soluro-navy font-semibold">24 Oct 2023, 14:35</span>
+</div>
+</div>
+</div>
+</section>
+<!-- END: DocumentHeader -->
+<!-- BEGIN: ItemsTableSection (Dense Formal Spreadsheet Table) -->
+<section class="mb-3.5" data-purpose="items-table-section">
+<div class="overflow-hidden rounded-lg border border-slate-200 shadow-sm bg-white">
+<table class="w-full text-left text-xs border-collapse">
+<thead>
+<tr class="bg-soluro-navy text-white text-[9px] uppercase tracking-wider font-semibold border-b border-soluro-navy">
+<th class="py-2 px-1.5 text-center w-5 font-semibold" scope="col">#</th>
+<th class="py-2 px-2 font-semibold" scope="col">ARTÍCULO / DESCRIPCIÓN</th>
+<th class="py-2 px-1 text-center w-9 font-semibold" scope="col">CANT.</th>
+<th class="py-2 px-1.5 text-right w-16 font-semibold" scope="col">PRECIO</th>
+<th class="py-2 px-2 text-right w-16 font-semibold" scope="col">SUBTOTAL</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-150 text-[11px]">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50/70 transition-colors">
+<td class="py-2 px-1.5 text-center font-bold text-slate-400 text-[10px]">1</td>
+<td class="py-2 px-2 font-medium text-slate-800 leading-snug">Servicio de Consultoría Estratégica</td>
+<td class="py-2 px-1 text-center text-slate-700 font-medium">1</td>
+<td class="py-2 px-1.5 text-right text-slate-500 font-mono text-[10px]">1,500.00</td>
+<td class="py-2 px-2 text-right font-bold text-soluro-navy font-mono text-[11px]">1,500.00</td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-slate-50/40 hover:bg-slate-50/80 transition-colors">
+<td class="py-2 px-1.5 text-center font-bold text-slate-400 text-[10px]">2</td>
+<td class="py-2 px-2 font-medium text-slate-800 leading-snug">Licencia Software Corporativa</td>
+<td class="py-2 px-1 text-center text-slate-700 font-medium">3</td>
+<td class="py-2 px-1.5 text-right text-slate-500 font-mono text-[10px]">350.00</td>
+<td class="py-2 px-2 text-right font-bold text-soluro-navy font-mono text-[11px]">1,050.00</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50/70 transition-colors">
+<td class="py-2 px-1.5 text-center font-bold text-slate-400 text-[10px]">3</td>
+<td class="py-2 px-2 font-medium text-slate-600 leading-snug">Mantenimiento y Soporte Anual</td>
+<td class="py-2 px-1 text-center text-slate-600 font-medium">1</td>
+<td class="py-2 px-1.5 text-right text-slate-400 font-mono text-[10px]">0.00</td>
+<td class="py-2 px-2 text-right font-semibold text-slate-500 font-mono text-[11px]">0.00</td>
+</tr>
+<!-- Row 4 -->
+<tr class="bg-slate-50/40 hover:bg-slate-50/80 transition-colors">
+<td class="py-2 px-1.5 text-center font-bold text-slate-400 text-[10px]">4</td>
+<td class="py-2 px-2 font-medium text-slate-600 leading-snug">Configuración e Implementación</td>
+<td class="py-2 px-1 text-center text-slate-600 font-medium">1</td>
+<td class="py-2 px-1.5 text-right text-slate-400 font-mono text-[10px]">0.00</td>
+<td class="py-2 px-2 text-right font-semibold text-slate-500 font-mono text-[11px]">0.00</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-slate-50/70 transition-colors">
+<td class="py-2 px-1.5 text-center font-bold text-slate-400 text-[10px]">5</td>
+<td class="py-2 px-2 font-medium text-slate-600 leading-snug">Capacitación de Personal</td>
+<td class="py-2 px-1 text-center text-slate-600 font-medium">2</td>
+<td class="py-2 px-1.5 text-right text-slate-400 font-mono text-[10px]">0.00</td>
+<td class="py-2 px-2 text-right font-semibold text-slate-500 font-mono text-[11px]">0.00</td>
+</tr>
+<!-- Row 6 -->
+<tr class="bg-slate-50/40 hover:bg-slate-50/80 transition-colors">
+<td class="py-2 px-1.5 text-center font-bold text-slate-400 text-[10px]">6</td>
+<td class="py-2 px-2 font-medium text-slate-600 leading-snug">Garantía Extendida de Servicio</td>
+<td class="py-2 px-1 text-center text-slate-600 font-medium">1</td>
+<td class="py-2 px-1.5 text-right text-slate-400 font-mono text-[10px]">0.00</td>
+<td class="py-2 px-2 text-right font-semibold text-slate-500 font-mono text-[11px]">0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- END: ItemsTableSection -->
+<!-- BEGIN: Integrated Ledger & Summary Block (Formal Invoice Split Architecture) -->
+<section class="mb-3.5 bg-slate-50/90 rounded-lg p-3 border border-slate-200/90" data-purpose="totals-summary-block">
+<div class="grid grid-cols-2 gap-3 divide-x divide-slate-200">
+<!-- Total Items Counter -->
+<div class="text-center pr-2">
+<span class="block text-[9px] uppercase tracking-wider font-bold text-slate-500">Total Artículos</span>
+<span class="text-2xl font-black text-soluro-navy leading-tight mt-0.5 block">9</span>
+<span class="text-[9px] text-slate-600"></span>
+</div>
+<!-- Grand Total Amount -->
+<div class="text-center pl-2">
+<span class="block text-[9px] uppercase tracking-wider font-bold text-slate-500">Monto Total</span>
+<div class="flex items-baseline justify-center gap-0.5 mt-0.5">
+<span class="text-sm font-bold text-soluro-navy">$</span>
+<span class="text-2xl font-black text-soluro-navy tracking-tight leading-tight">2,550.00</span>
+</div>
+<span class="text-[9px] text-amber-700 font-bold bg-amber-100/70 px-1.5 py-0.5 rounded-full inline-block mt-0.5"></span>
+</div>
+</div>
+</section>
+<!-- END: Integrated Ledger & Summary Block -->
+<!-- BEGIN: AdditionalNotesSection -->
+<section class="bg-amber-50/40 border border-amber-200/70 rounded-lg p-3" data-purpose="quote-notes">
+<div class="flex items-center gap-1.5 mb-1.5">
+<svg class="w-3.5 h-3.5 text-soluro-gold shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<h3 class="text-[10px] font-extrabold uppercase tracking-wider text-soluro-navy">Notas o Información Adicional</h3>
+</div>
+<p class="text-[11px] text-slate-600 leading-relaxed font-normal bg-white/70 p-2.5 rounded border border-amber-100">
+            El presente presupuesto tiene una validez de <strong class="text-slate-800 font-semibold">15 días hábiles</strong> a partir de la fecha de emisión. Los pagos de servicios se realizarán mediante transferencia bancaria o código QR Soluro según los términos acordados.
+          </p>
+</section><section class="mt-3.5 space-y-2.5" data-purpose="attached-photographs-section">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5 text-soluro-navy shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"></path>
+      </svg>
+      <h3 class="text-[10px] font-extrabold uppercase tracking-wider text-soluro-navy">Fotografías Adjuntas</h3>
+    </div>
+    <span class="bg-slate-100 text-slate-700 border border-slate-200 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">2 Fotos</span>
+  </div>
+
+  <div class="space-y-2.5">
+    <!-- Photo Item 1 -->
+    <div class="rounded-lg overflow-hidden border border-slate-200 bg-white shadow-sm">
+      <div class="relative w-full aspect-[16/9] bg-slate-100 overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Evidencia de instalación en sitio" class="w-full h-full object-cover">
+        <span class="absolute top-2 left-2 bg-soluro-navy/85 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow-sm backdrop-blur-sm">Foto 1</span>
+      </div>
+      <div class="p-2 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between">
+        <p class="text-[10px] font-medium text-slate-700 leading-tight">Foto 1: Productos de temporada</p>
+        <span class="text-[9px] text-slate-400 font-mono">IMG_20231024_01.jpg</span>
+      </div>
+    </div>
+
+    <!-- Photo Item 2 -->
+    <div class="rounded-lg overflow-hidden border border-slate-200 bg-white shadow-sm">
+      <div class="relative w-full aspect-[16/9] bg-slate-100 overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Verificación de componentes y hardware" class="w-full h-full object-cover">
+        <span class="absolute top-2 left-2 bg-soluro-navy/85 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow-sm backdrop-blur-sm">Foto 2</span>
+      </div>
+      <div class="p-2 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between">
+        <p class="text-[10px] font-medium text-slate-700 leading-tight">Foto 2: Artículos para la venta</p>
+        <span class="text-[9px] text-slate-400 font-mono">IMG_20231024_02.jpg</span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- END: AdditionalNotesSection -->
+<!-- BEGIN: DocumentFooterNotes -->
+<footer class="mt-3.5 pt-2.5 border-t border-slate-100 text-center" data-purpose="document-paper-footer">
+<p class="text-[9px] text-slate-600 leading-tight">
+            Generado electrónicamente por la aplicación Soluro</p>
+</footer>
+<!-- END: DocumentFooterNotes -->
+</div>
+</article>
+<!-- Page Indicator / Bottom Note -->
+<div class="text-center pt-1 pb-1">
+<p class="text-[11px] text-slate-600 flex items-center justify-center gap-1">
+<svg class="w-3.5 h-3.5 text-soluro-navy/70" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" fill-rule="evenodd"></path>
+</svg>
+        Documento listo para descargar o compartir
+      </p>
+</div>
+</div>
+</main>
+<!-- END: MainContentArea -->
+<!-- BEGIN: BottomActionBar -->
+<aside class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 z-30 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]" data-purpose="floating-actions">
+<div class="max-w-md mx-auto flex items-center gap-3">
+<!-- Primary Download Button (Navy) -->
+<button class="flex-1 inline-flex items-center justify-center gap-2 bg-soluro-navy hover:bg-soluro-navy-light active:bg-soluro-navy-dark text-white font-bold text-xs py-3 px-4 rounded-xl shadow transition-all duration-150 active:scale-[0.98]" data-purpose="download-action" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="">Descargar PDF</span>
+</button>
+<!-- Share Action Button (Soluro Gold) -->
+<button class="flex-1 inline-flex items-center justify-center gap-2 bg-soluro-gold hover:bg-soluro-gold-hover active:bg-amber-500 text-soluro-navy font-bold text-xs py-3 px-4 rounded-xl shadow transition-all duration-150 active:scale-[0.98]" data-purpose="share-action" type="button">
+<svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="">Compartir PDF</span>
+</button>
+</div>
+</aside>
+<!-- END: BottomActionBar -->
+
+
+
+
+
+
+</body></html>

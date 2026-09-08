@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import 'qr/qr_list_screen.dart';
 import 'direcciones/direcciones_list_screen.dart';
+import 'cotizaciones/cotizaciones_list_screen.dart';
 
 class MainScreen extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeNotifier;
@@ -23,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     final pages = [
       QRListScreen(key: _qrListKey),
       const DireccionesListScreen(),
+      const CotizacionesListScreen(),
     ];
 
     return Scaffold(
@@ -48,7 +50,11 @@ class _MainScreenState extends State<MainScreen> {
             ),
             const SizedBox(width: 10),
             Text(
-              _currentIndex == 0 ? 'QR - Cobros' : 'Mis Direcciones',
+              _currentIndex == 0 
+                  ? 'QR - Cobros' 
+                  : _currentIndex == 1 
+                      ? 'Mis Direcciones' 
+                      : 'Cotizaciones',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -109,6 +115,11 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.storefront_outlined),
               activeIcon: Icon(Icons.storefront),
               label: 'Mis Direcciones',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.request_quote_outlined),
+              activeIcon: Icon(Icons.request_quote),
+              label: 'Cotizaciones',
             ),
           ],
         ),

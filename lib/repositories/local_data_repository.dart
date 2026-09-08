@@ -1,6 +1,9 @@
 import '../models/direccion_model.dart';
 import '../models/qr_code_model.dart';
 import '../models/sync_status.dart';
+import '../models/cotizacion_model.dart';
+import '../models/articulo_cotizacion_model.dart';
+import '../models/imagen_cotizacion_model.dart';
 import '../services/database_helper.dart';
 import 'data_repository.dart';
 
@@ -73,5 +76,51 @@ class LocalDataRepository implements DataRepository {
   @override
   Future<void> deleteDireccion(String id) {
     return _dbHelper.softDeleteDireccion(id);
+  }
+
+  // --- COTIZACIONES ---
+
+  @override
+  Future<List<CotizacionModel>> getCotizaciones({bool includeDeleted = false}) {
+    return _dbHelper.getCotizaciones(includeDeleted: includeDeleted);
+  }
+
+  @override
+  Future<CotizacionModel?> getCotizacionById(String id) {
+    return _dbHelper.getCotizacionById(id);
+  }
+
+  @override
+  Future<void> saveCotizacionCompleta(
+    CotizacionModel cotizacion,
+    List<ArticuloCotizacionModel> articulos,
+    List<ImagenCotizacionModel> imagenes,
+  ) async {
+    final existing = await _dbHelper.getCotizacionById(cotizacion.id);
+    CotizacionModel finalCotizacion = cotizacion;
+    if (existing != null) {
+      finalCotizacion = cotizacion.copyWith(
+        fechaModificacion: DateTime.now(),
+        isSynced: false,
+        syncStatus: SyncStatus.pending,
+      );
+    }
+    await _dbHelper.insertCotizacionCompleta(finalCotizacion, articulos, imagenes);
+  }
+
+  @override
+  Future<void> deleteCotizacion(String id) {
+    // La regla de negocio indica que se debe eliminar físicamente
+    return _dbHelper.hardDeleteCotizacion(id);
+  }
+
+  @override
+  Future<List<ArticuloCotizacionModel>> getArticulosPorCotizacion(String cotizacionId) {
+    return _dbHelper.getArticulosPorCotizacion(cotizacionId);
+  }
+
+  @override
+  Future<List<ImagenCotizacionModel>> getImagenesPorCotizacion(String cotizacionId) {
+    return _dbHelper.getImagenesPorCotizacion(cotizacionId);
   }
 }
