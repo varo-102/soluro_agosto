@@ -1,3 +1,4 @@
+import '../models/cotizacion_model.dart';
 import '../models/direccion_model.dart';
 import '../models/qr_code_model.dart';
 
@@ -31,4 +32,24 @@ abstract class DataRepository {
 
   /// Realiza un borrado lógico (Soft Delete) de la dirección.
   Future<void> deleteDireccion(String id);
+
+  // --- COTIZACIONES ---
+
+  /// Obtiene todas las cotizaciones activas (por defecto `isDeleted == false`).
+  Future<List<CotizacionModel>> getCotizaciones({bool includeDeleted = false});
+
+  /// Obtiene una cotización por su UUID junto con sus artículos y fotos.
+  Future<CotizacionModel?> getCotizacionById(String id);
+
+  /// Guarda o actualiza una cotización completa.
+  Future<void> saveCotizacion(CotizacionModel cotizacion);
+
+  /// Realiza un borrado lógico (Soft Delete) de la cotización.
+  Future<void> deleteCotizacion(String id);
+
+  /// Duplica una cotización existente añadiendo '(copia)' a su título y generando nuevos UUIDs.
+  Future<CotizacionModel> duplicateCotizacion(String id);
+
+  /// Devuelve el siguiente número secuencial para una nueva cotización.
+  Future<int> getNextCotizacionNumero();
 }

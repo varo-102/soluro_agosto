@@ -1,3 +1,4 @@
+import '../models/cotizacion_model.dart';
 import '../models/direccion_model.dart';
 import '../models/qr_code_model.dart';
 import 'data_repository.dart';
@@ -85,5 +86,39 @@ class SyncDataRepository implements DataRepository {
     // Aplica borrado lógico localmente
     await _localRepo.deleteDireccion(id);
     // unawaited(syncDirecciones());
+  }
+
+  // --- COTIZACIONES ---
+
+  @override
+  Future<List<CotizacionModel>> getCotizaciones({bool includeDeleted = false}) {
+    return _localRepo.getCotizaciones(includeDeleted: includeDeleted);
+  }
+
+  @override
+  Future<CotizacionModel?> getCotizacionById(String id) {
+    return _localRepo.getCotizacionById(id);
+  }
+
+  @override
+  Future<void> saveCotizacion(CotizacionModel cotizacion) async {
+    await _localRepo.saveCotizacion(cotizacion);
+    // unawaited(syncCotizaciones());
+  }
+
+  @override
+  Future<void> deleteCotizacion(String id) async {
+    await _localRepo.deleteCotizacion(id);
+    // unawaited(syncCotizaciones());
+  }
+
+  @override
+  Future<CotizacionModel> duplicateCotizacion(String id) {
+    return _localRepo.duplicateCotizacion(id);
+  }
+
+  @override
+  Future<int> getNextCotizacionNumero() {
+    return _localRepo.getNextCotizacionNumero();
   }
 }

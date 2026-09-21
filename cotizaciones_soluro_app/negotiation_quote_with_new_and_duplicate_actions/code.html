@@ -1,0 +1,194 @@
+<!DOCTYPE html><html class="light" lang="es" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Negociación de Cuotas</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "tertiary-fixed": "#ffdcbe",
+                        "secondary-fixed-dim": "#fabd00",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#b0c8eb",
+                        "tertiary": "#1a0b00",
+                        "text-on-light": "#0A2540",
+                        "primary-fixed": "#d2e4ff",
+                        "on-error-container": "#93000a",
+                        "surface-muted": "#F1F4F9",
+                        "primary-container": "#0a2540",
+                        "on-secondary-container": "#6c5000",
+                        "outline-variant": "#c4c6ce",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#5b4300",
+                        "on-secondary-fixed": "#261a00",
+                        "inverse-surface": "#2f3131",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#2d1600",
+                        "on-primary-fixed-variant": "#314865",
+                        "secondary": "#785900",
+                        "secondary-container": "#fdc003",
+                        "surface-tint": "#49607e",
+                        "tertiary-container": "#381d00",
+                        "on-tertiary-fixed-variant": "#613f1c",
+                        "surface-container-low": "#f3f3f4",
+                        "tertiary-fixed-dim": "#eebd90",
+                        "surface-dim": "#dadada",
+                        "secondary-fixed": "#ffdf9e",
+                        "on-surface": "#1a1c1c",
+                        "on-primary-fixed": "#001c37",
+                        "surface-container-highest": "#e2e2e2",
+                        "amarillo-sol": "#FFC107",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#43474d",
+                        "on-primary-container": "#768dad",
+                        "surface-container": "#eeeeee",
+                        "background": "#f9f9f9",
+                        "surface-variant": "#e2e2e2",
+                        "text-on-dark": "#FFFFFF",
+                        "primary-fixed-dim": "#b0c8eb",
+                        "outline": "#74777e",
+                        "azul-profundo": "#0A2540",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-bright": "#f9f9f9",
+                        "error-container": "#ffdad6",
+                        "on-background": "#1a1c1c",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ae835a",
+                        "primary": "#000f22"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "margin-mobile": "20px",
+                        "md": "16px",
+                        "gutter": "16px",
+                        "lg": "24px",
+                        "margin-desktop": "64px",
+                        "base": "4px",
+                        "safe": "env(safe-area-inset-bottom)"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Geist", "sans-serif"],
+                        "headline-lg": ["Geist", "sans-serif"],
+                        "label-lg": ["Geist", "sans-serif"],
+                        "headline-xl": ["Geist", "sans-serif"],
+                        "body-lg": ["Geist", "sans-serif"],
+                        "label-sm": ["Geist", "sans-serif"],
+                        "headline-lg-mobile": ["Geist", "sans-serif"],
+                        "body-md": ["Geist", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap');
+        body { font-family: 'Geist', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        /* Ambient Soft Shadow for Cards */
+        .soft-card-shadow {
+            box-shadow: 0px 4px 24px rgba(10, 37, 64, 0.06);
+        }
+        
+        /* Hide scrollbar for clean horizontal scrolling tables */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+<link data-snapdom="injected-import" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"></head>
+<body class="bg-surface-muted text-on-surface antialiased min-h-screen pb-24">
+<!-- JSON Component: TopAppBar -->
+<header class="bg-surface-container-lowest dark:bg-surface-container-lowest docked full-width top-0 shadow-sm dark:shadow-none sticky z-40">
+<div class="flex items-center justify-between px-margin-mobile w-full h-14">
+<h1 class="font-headline-md text-headline-md-mobile font-bold text-azul-profundo truncate px-2">Negociar</h1>
+<button class="font-label-lg text-label-lg hover:bg-secondary-container transition-all active:scale-95 rounded-full px-4 py-2 mr-2 shadow-sm bg-azul-profundo text-on-primary">Historial</button>
+</div>
+</header>
+<main class="mx-auto pt-2 pb-6">
+<!-- Table Card -->
+<div id="primary-actions-row" class="flex flex-row gap-2 w-full px-margin-mobile mb-3"><button class="flex-1 py-2 px-2 flex items-center justify-center gap-1 bg-azul-profundo text-on-primary hover:bg-primary-container transition-colors rounded-lg font-label-lg text-label-lg soft-card-shadow truncate" style="background-color: rgb(10, 37, 64); color: rgb(255, 255, 255);"><span class="material-symbols-outlined text-[18px]">share</span><span class="truncate">Compartir</span></button><button class="flex-1 py-2 px-2 flex items-center justify-center gap-1 bg-surface-container-lowest text-azul-profundo hover:bg-primary-fixed transition-colors rounded-lg font-label-lg text-label-lg soft-card-shadow truncate"><span class="material-symbols-outlined text-[18px]">content_copy</span><span class="truncate">Duplicar</span></button><button class="flex-1 py-2 px-2 flex items-center justify-center gap-1 hover:bg-primary-container transition-colors rounded-lg font-label-lg text-label-lg soft-card-shadow truncate bg-amarillo-sol text-azul-profundo" style="background-color: rgb(255, 193, 7); color: rgb(10, 37, 64);"><span class="material-symbols-outlined text-[18px]">add</span><span class="truncate">Nueva</span></button></div><div class="bg-surface-container-lowest soft-card-shadow overflow-hidden mb-3">
+<div class="w-full overflow-x-auto no-scrollbar">
+<table class="w-full text-left border-collapse"><thead class=""><tr class="bg-surface-container-low border-b border-surface-variant"><th class="px-3 py-2 text-label-sm font-medium text-on-surface-variant uppercase tracking-wider" colspan="5"><div class="flex items-center justify-between w-full px-1"><div class="flex items-center gap-1.5"><span class="text-[18px] font-bold">Cotización 1</span><button type="button" class="p-1 text-on-surface-variant hover:text-azul-profundo hover:bg-surface-container-low rounded transition-colors flex items-center justify-center" aria-label="Editar título"><span class="material-symbols-outlined text-[18px]">edit</span></button></div><span class="text-label-sm font-medium text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">check_circle</span>Guardado</span></div></th></tr></thead><thead class=""><tr class="border-b border-surface-variant bg-surface-muted text-on-surface-variant font-label-sm text-label-sm uppercase"><th class="py-1.5 px-2 w-8 text-center font-semibold">#</th><th class="py-1.5 px-2 font-semibold w-full">Artículo</th><th class="py-1.5 px-2 w-24 text-right font-semibold">Precio&nbsp;</th><th class="py-1.5 px-2 text-center font-semibold w-8">Cant.</th><th class="py-1.5 px-2 w-28 text-right font-semibold text-azul-profundo min-w-[100px]">Subtotal</th></tr></thead><tbody class="font-body-md text-body-md"><tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors"><td class="py-1.5 px-2 text-center text-on-surface-variant font-medium">1</td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface placeholder-on-surface-variant/50 font-medium" placeholder="Descripción" type="text" value="Servicio de Consultoría"></td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-right font-mono" placeholder="0.00" type="number" value="1500"></td><td class="py-1.5 px-2 text-center"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-center font-mono bg-surface-muted rounded" placeholder="0.00" type="number" value="1"></td><td class="py-1.5 px-2 text-right font-semibold text-azul-profundo">1500.00</td></tr><tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors"><td class="py-1.5 px-2 text-center text-on-surface-variant font-medium">2</td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface placeholder-on-surface-variant/50 font-medium" placeholder="Descripción" type="text" value="Licencia Software"></td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-right font-mono" placeholder="0.00" type="number" value="350"></td><td class="py-1.5 px-2 text-center"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-center font-mono bg-surface-muted rounded" placeholder="0.00" type="number" value="3"></td><td class="py-1.5 px-2 text-right font-semibold text-azul-profundo">350.00</td></tr><tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors"><td class="py-1.5 px-2 text-center text-on-surface-variant font-medium">3</td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface placeholder-on-surface-variant/50 font-medium" placeholder="Descripción" type="text" value=""></td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-right font-mono" placeholder="0.00" type="number" value=""></td><td class="py-1.5 px-2 text-center"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-center font-mono bg-surface-muted rounded" placeholder="0.00" type="number" value=""></td><td class="py-1.5 px-2 text-right font-semibold text-azul-profundo">0.00</td></tr><tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors"><td class="py-1.5 px-2 text-center text-on-surface-variant font-medium">4</td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface placeholder-on-surface-variant/50 font-medium" placeholder="Descripción" type="text" value=""></td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-right font-mono" placeholder="0.00" type="number" value=""></td><td class="py-1.5 px-2 text-center"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-center font-mono bg-surface-muted rounded" placeholder="0.00" type="number" value=""></td><td class="py-1.5 px-2 text-right font-semibold text-azul-profundo">0.00</td></tr><tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors"><td class="py-1.5 px-2 text-center text-on-surface-variant font-medium">5</td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface placeholder-on-surface-variant/50 font-medium" placeholder="Descripción" type="text" value=""></td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-right font-mono" placeholder="0.00" type="number" value=""></td><td class="py-1.5 px-2 text-center"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-center font-mono bg-surface-muted rounded" placeholder="0.00" type="number" value=""></td><td class="py-1.5 px-2 text-right font-semibold text-azul-profundo">0.00</td></tr><tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors"><td class="py-1.5 px-2 text-center text-on-surface-variant font-medium">6</td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface placeholder-on-surface-variant/50 font-medium" placeholder="Descripción" type="text" value=""></td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-right font-mono" placeholder="0.00" type="number" value=""></td><td class="py-1.5 px-2 text-center"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-center font-mono bg-surface-muted rounded" placeholder="0.00" type="number" value=""></td><td class="py-1.5 px-2 text-right font-semibold text-azul-profundo">0.00</td></tr><tr class="border-b border-surface-variant hover:bg-surface-container-low transition-colors"><td class="py-1.5 px-2 text-center text-on-surface-variant font-medium">7</td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface placeholder-on-surface-variant/50 font-medium" placeholder="Descripción" type="text" value=""></td><td class="py-1.5 px-2"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-right font-mono" placeholder="0.00" type="number" value=""></td><td class="py-1.5 px-2 text-center"><input class="w-full bg-transparent border-none p-0 focus:ring-0 focus:outline-none text-on-surface text-center font-mono bg-surface-muted rounded" placeholder="0.00" type="number" value=""></td><td class="py-1.5 px-2 text-right font-semibold text-azul-profundo">0.00</td></tr></tbody><tfoot class="bg-surface-container-low border-t-2 border-azul-profundo/20"><tr class="border-b border-azul-profundo/10"><td colspan="5" class="p-2.5"><div class="flex flex-row gap-3 w-full"><div class="flex-1 bg-surface-container-lowest py-2 px-3 rounded-lg border border-azul-profundo/10 soft-card-shadow text-center"><div class="text-label-sm text-on-surface-variant uppercase tracking-wider mb-0.5">Total unidades</div><div class="text-headline-md text-azul-profundo font-bold">4</div></div><div class="flex-1 bg-surface-container-lowest py-2 px-3 rounded-lg border border-azul-profundo/10 soft-card-shadow text-center"><div class="text-label-sm text-on-surface-variant uppercase tracking-wider mb-0.5">Monto Total</div><div class="text-headline-md text-azul-profundo font-bold">1850.00</div></div></div></td></tr></tfoot></table>
+</div>
+</div><div class="flex gap-2 w-full mb-3 px-margin-mobile"><button class="flex-1 py-2 px-2 flex items-center justify-center gap-1 bg-surface-container-lowest text-azul-profundo hover:bg-primary-fixed transition-colors rounded-lg font-label-lg text-label-lg soft-card-shadow truncate"><span class="material-symbols-outlined text-[18px]">add</span><span class="truncate">&nbsp;Artículo</span></button><button class="flex-1 py-2 px-2 flex items-center justify-center gap-1 bg-surface-container-lowest text-azul-profundo hover:bg-primary-fixed transition-colors rounded-lg font-label-lg text-label-lg soft-card-shadow truncate"><span class="material-symbols-outlined text-[18px]">library_add</span><span class="truncate">&nbsp;5 Artículos</span></button><button class="flex-1 py-2 px-2 flex items-center justify-center gap-1 bg-surface-container-lowest text-azul-profundo hover:bg-primary-fixed transition-colors rounded-lg font-label-lg text-label-lg soft-card-shadow truncate"><span class="material-symbols-outlined text-[18px]">photo_library</span><span class="truncate">+ Fotos</span></button></div><div class="w-full mb-3 px-margin-mobile"><div class="bg-surface-container-lowest p-3 rounded-lg soft-card-shadow border border-azul-profundo/10"><label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1 font-semibold">Notas o Información Adicional</label><textarea class="w-full bg-surface-muted border border-surface-variant rounded-lg p-2 text-on-surface font-body-md text-body-md placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-azul-profundo resize-none overflow-hidden block transition-all" rows="2" style="field-sizing: content; min-height: 56px; overflow: hidden; resize: none; height: 64px;" oninput="this.style.height = 'auto'; this.style.height = Math.max(this.scrollHeight, 56) + 'px';" placeholder="Escribe información o notas adicionales aquí..."></textarea></div></div>
+<!-- Action Button -->
+
+</main>
+<!-- JSON Component: BottomNavBar -->
+<nav class="bg-surface dark:bg-surface-container-low fixed bottom-0 w-full z-50 border-t border-surface-muted shadow-lg fixed bottom-0 left-0 w-full flex justify-around items-center h-20 bg-surface pb-safe"><button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-azul-profundo hover:bg-surface-container-high transition-all duration-200 active:scale-95 px-3 py-1 rounded-lg"><span class="material-symbols-outlined mb-0.5 text-[24px]">qr_code_2</span><span class="font-label-sm text-label-sm font-medium">QR</span></button><button class="flex flex-col items-center justify-center bg-amarillo-sol text-azul-profundo rounded-full px-5 py-2 hover:bg-secondary-container transition-all duration-200 active:scale-95 shadow-sm"><span class="material-symbols-outlined mb-0.5 text-[22px]" style="font-variation-settings: &quot;FILL&quot; 1;">request_quote</span><span class="font-label-sm text-label-sm font-bold">Cotizaciones</span></button><button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-azul-profundo hover:bg-surface-container-high transition-all duration-200 active:scale-95 px-3 py-1 rounded-lg"><span class="material-symbols-outlined mb-0.5 text-[24px]">storefront</span><span class="font-label-sm text-label-sm font-medium">Mis direcciones</span></button></nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>
