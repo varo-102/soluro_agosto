@@ -44,6 +44,10 @@ dependencies:
   quick_actions: ^1.0.6
   share_plus: ^9.0.0
   uuid: ^4.5.1
+  pdf: ^3.13.0
+  printing: ^5.13.1
+  flutter_image_compress: ^2.3.0
+  permission_handler: 11.3.1
 
 dev_dependencies:
   flutter_test:

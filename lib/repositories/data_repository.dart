@@ -1,5 +1,6 @@
 import '../models/direccion_model.dart';
 import '../models/qr_code_model.dart';
+import '../models/cotizacion_model.dart';
 
 /// Interfaz abstracta del repositorio de datos para desacoplar
 /// la lógica de almacenamiento de la interfaz de usuario.
@@ -31,4 +32,12 @@ abstract class DataRepository {
 
   /// Realiza un borrado lógico (Soft Delete) de la dirección.
   Future<void> deleteDireccion(String id);
+
+  // --- COTIZACIONES ---
+
+  Future<List<CotizacionModel>> getCotizaciones({bool includeDeleted = false});
+  Future<CotizacionModel?> getCotizacionById(String id);
+  Future<void> saveCotizacion(CotizacionModel cotizacion);
+  Future<void> deleteCotizacion(String id);
+  Future<void> hardDeleteCotizacion(String id);
 }

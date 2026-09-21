@@ -1,6 +1,7 @@
 import '../models/direccion_model.dart';
 import '../models/qr_code_model.dart';
 import '../models/sync_status.dart';
+import '../models/cotizacion_model.dart';
 import '../services/database_helper.dart';
 import 'data_repository.dart';
 
@@ -73,5 +74,42 @@ class LocalDataRepository implements DataRepository {
   @override
   Future<void> deleteDireccion(String id) {
     return _dbHelper.softDeleteDireccion(id);
+  }
+
+  // --- COTIZACIONES ---
+
+  @override
+  Future<List<CotizacionModel>> getCotizaciones({bool includeDeleted = false}) {
+    return _dbHelper.getCotizaciones(includeDeleted: includeDeleted);
+  }
+
+  @override
+  Future<CotizacionModel?> getCotizacionById(String id) {
+    return _dbHelper.getCotizacionById(id);
+  }
+
+  @override
+  Future<void> saveCotizacion(CotizacionModel cotizacion) async {
+    final existing = await _dbHelper.getCotizacionById(cotizacion.id);
+    if (existing != null) {
+      final updated = cotizacion.copyWith(
+        fechaModificacion: DateTime.now(),
+        isSynced: 0,
+        syncStatus: SyncStatus.pending,
+      );
+      await _dbHelper.updateCotizacion(updated);
+    } else {
+      await _dbHelper.insertCotizacion(cotizacion);
+    }
+  }
+
+  @override
+  Future<void> deleteCotizacion(String id) {
+    return _dbHelper.softDeleteCotizacion(id);
+  }
+
+  @override
+  Future<void> hardDeleteCotizacion(String id) {
+    return _dbHelper.hardDeleteCotizacion(id);
   }
 }
