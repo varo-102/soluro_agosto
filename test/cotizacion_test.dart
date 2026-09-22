@@ -124,6 +124,118 @@ void main() {
       expect(restored.totalUnidades, equals(2.0));
       expect(restored.montoTotal, equals(9000.0));
     });
+
+    test('isCompletoParaGuardado validates description, quantity, and price', () {
+      final cotId = 'test-val-1';
+
+      // 1. Vacío completo
+      final itemVacio = CotizacionArticuloModel(
+        cotizacionId: cotId,
+        orden: 1,
+        descripcion: '',
+        precio: 0.0,
+        cantidad: 0.0,
+      );
+      expect(itemVacio.isCompletoParaGuardado, isFalse);
+
+      // 2. Solo descripción (sin cantidad ni precio)
+      final itemSoloDesc = CotizacionArticuloModel(
+        cotizacionId: cotId,
+        orden: 1,
+        descripcion: 'Tornillos drywall',
+        precio: 0.0,
+        cantidad: 0.0,
+      );
+      expect(itemSoloDesc.isCompletoParaGuardado, isFalse);
+
+      // 3. Descripción con espacios en blanco
+      final itemEspacios = CotizacionArticuloModel(
+        cotizacionId: cotId,
+        orden: 1,
+        descripcion: '   ',
+        precio: 10.0,
+        cantidad: 2.0,
+      );
+      expect(itemEspacios.isCompletoParaGuardado, isFalse);
+
+      // 4. Descripción y cantidad sin precio unitario
+      final itemSinPrecio = CotizacionArticuloModel(
+        cotizacionId: cotId,
+        orden: 1,
+        descripcion: 'Tornillos drywall',
+        precio: 0.0,
+        cantidad: 5.0,
+      );
+      expect(itemSinPrecio.isCompletoParaGuardado, isFalse);
+
+      // 5. Descripción y precio sin cantidad
+      final itemSinCantidad = CotizacionArticuloModel(
+        cotizacionId: cotId,
+        orden: 1,
+        descripcion: 'Tornillos drywall',
+        precio: 12.5,
+        cantidad: 0.0,
+      );
+      expect(itemSinCantidad.isCompletoParaGuardado, isFalse);
+
+      // 6. Completo: descripción, cantidad > 0 y precio > 0
+      final itemCompleto = CotizacionArticuloModel(
+        cotizacionId: cotId,
+        orden: 1,
+        descripcion: 'Tornillos drywall 1 pulgada',
+        precio: 12.5,
+        cantidad: 10.0,
+      );
+      expect(itemCompleto.isCompletoParaGuardado, isTrue);
+    });
+
+    test('tieneArticuloValidoParaGuardado requires at least one complete line', () {
+      // Cotización vacía recién creada
+      final cotVacia = CotizacionModel.createEmpty(numero: 1);
+      expect(cotVacia.tieneArticuloValidoParaGuardado, isFalse);
+
+      // Cotización con artículos incompletos
+      final cotIncompleta = cotVacia.copyWith(
+        articulos: [
+          CotizacionArticuloModel(
+            cotizacionId: cotVacia.id,
+            orden: 1,
+            descripcion: 'Solo descripción',
+            precio: 0.0,
+            cantidad: 0.0,
+          ),
+          CotizacionArticuloModel(
+            cotizacionId: cotVacia.id,
+            orden: 2,
+            descripcion: 'Con cantidad',
+            precio: 0.0,
+            cantidad: 3.0,
+          ),
+        ],
+      );
+      expect(cotIncompleta.tieneArticuloValidoParaGuardado, isFalse);
+
+      // Cotización con al menos una fila completa
+      final cotValida = cotVacia.copyWith(
+        articulos: [
+          CotizacionArticuloModel(
+            cotizacionId: cotVacia.id,
+            orden: 1,
+            descripcion: 'Pintura Anticorrosiva',
+            precio: 45.0,
+            cantidad: 2.0,
+          ),
+          CotizacionArticuloModel(
+            cotizacionId: cotVacia.id,
+            orden: 2,
+            descripcion: '',
+            precio: 0.0,
+            cantidad: 0.0,
+          ),
+        ],
+      );
+      expect(cotValida.tieneArticuloValidoParaGuardado, isTrue);
+    });
   });
 
   group('Repository & Persistence Tests for Cotizaciones', () {

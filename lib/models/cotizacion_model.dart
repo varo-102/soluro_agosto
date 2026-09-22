@@ -32,6 +32,11 @@ class CotizacionArticuloModel {
   bool get hasContent =>
       descripcion.trim().isNotEmpty || precio > 0 || cantidad > 0;
 
+  /// Verifica si la línea de artículo tiene los datos mínimos requeridos para permitir
+  /// el guardado: nombre no vacío, cantidad > 0 y precio unitario > 0.
+  bool get isCompletoParaGuardado =>
+      descripcion.trim().isNotEmpty && cantidad > 0 && precio > 0;
+
   CotizacionArticuloModel copyWith({
     String? id,
     String? cotizacionId,
@@ -185,6 +190,11 @@ class CotizacionModel {
   List<CotizacionArticuloModel> get articulosValidos {
     return articulos.where((item) => item.hasContent).toList();
   }
+
+  /// Determina si la cotización cuenta con al menos una línea de artículo completa
+  /// (con nombre, cantidad y precio unitario) para habilitar su creación o guardado.
+  bool get tieneArticuloValidoParaGuardado =>
+      articulos.any((item) => item.isCompletoParaGuardado);
 
   /// Número de fotos adjuntas.
   int get fotosCount => fotos.length;

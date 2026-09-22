@@ -47,6 +47,7 @@ class CotizacionScreenState extends State<CotizacionScreen> {
   late CotizacionModel _currentCotizacion;
   bool _isLoading = true;
   bool _isSaving = false;
+  bool _isPersisted = false;
   Timer? _debounceTimer;
 
   final TextEditingController _tituloController = TextEditingController();
@@ -122,13 +123,14 @@ class CotizacionScreenState extends State<CotizacionScreen> {
       _tituloController.text = cotizacion.titulo;
       _notasController.text = cotizacion.notas;
       _initItemControllers();
+      _isPersisted = true;
       _isLoading = false;
       _isSaving = false;
     });
   }
 
   /// Restablece la pantalla para mostrar una NUEVA cotización en blanco
-  /// (Con número correlativo, 7 artículos vacíos, fecha actual e indicador GUARDADO)
+  /// (Con número correlativo y 7 artículos vacíos, en memoria hasta que se agregue un artículo válido)
   Future<void> resetToNew({bool silent = false}) async {
     _debounceTimer?.cancel();
     setState(() => _isLoading = true);
@@ -137,15 +139,13 @@ class CotizacionScreenState extends State<CotizacionScreen> {
       final nextNumber = await _repository.getNextCotizacionNumero();
       final newCot = CotizacionModel.createEmpty(numero: nextNumber);
 
-      // Guardar inicialmente para que exista en DB
-      await _repository.saveCotizacion(newCot);
-
       if (mounted) {
         setState(() {
           _currentCotizacion = newCot;
           _tituloController.text = newCot.titulo;
           _notasController.text = '';
           _initItemControllers();
+          _isPersisted = false;
           _isLoading = false;
           _isSaving = false;
         });
@@ -173,6 +173,7 @@ class CotizacionScreenState extends State<CotizacionScreen> {
           _tituloController.text = fallbackCot.titulo;
           _notasController.text = '';
           _initItemControllers();
+          _isPersisted = false;
           _isLoading = false;
           _isSaving = false;
         });
@@ -229,6 +230,15 @@ class CotizacionScreenState extends State<CotizacionScreen> {
   }
 
   void _triggerDebouncedSave() {
+    // Si la cotización aún no ha sido persistida y no tiene al menos un artículo completo (nombre, cantidad y precio), no se guarda
+    if (!_isPersisted && !_currentCotizacion.tieneArticuloValidoParaGuardado) {
+      _debounceTimer?.cancel();
+      if (_isSaving) {
+        setState(() => _isSaving = false);
+      }
+      return;
+    }
+
     setState(() => _isSaving = true);
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 800), () async {
@@ -237,10 +247,21 @@ class CotizacionScreenState extends State<CotizacionScreen> {
   }
 
   Future<void> _saveCurrentCotizacion({bool showReassurance = false}) async {
+    // Solo permitir guardar en base de datos si ya está persistida o si cumple la condición de artículo completo
+    if (!_isPersisted && !_currentCotizacion.tieneArticuloValidoParaGuardado) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+      return;
+    }
+
     try {
       await _repository.saveCotizacion(_currentCotizacion);
       if (mounted) {
-        setState(() => _isSaving = false);
+        setState(() {
+          _isPersisted = true;
+          _isSaving = false;
+        });
         if (showReassurance) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -266,6 +287,20 @@ class CotizacionScreenState extends State<CotizacionScreen> {
 
   /// Duplica la cotización actual
   Future<void> _duplicateCurrentCotizacion() async {
+    if (!_isPersisted && !_currentCotizacion.tieneArticuloValidoParaGuardado) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Ingresa al menos un artículo con nombre, cantidad y precio para duplicar la cotización',
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (_debounceTimer?.isActive ?? false) {
+      _debounceTimer?.cancel();
+    }
     await _saveCurrentCotizacion();
     try {
       final duplicated =
@@ -555,6 +590,11 @@ class CotizacionScreenState extends State<CotizacionScreen> {
             padding: const EdgeInsets.only(right: 14),
             child: ElevatedButton(
               onPressed: () async {
+                if (_debounceTimer?.isActive ?? false) {
+                  _debounceTimer?.cancel();
+                  await _saveCurrentCotizacion();
+                }
+                if (!context.mounted) return;
                 final selected = await Navigator.push<CotizacionModel>(
                   context,
                   MaterialPageRoute(
@@ -595,7 +635,12 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                 // Compartir
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
+                      if (_debounceTimer?.isActive ?? false) {
+                        _debounceTimer?.cancel();
+                        await _saveCurrentCotizacion();
+                      }
+                      if (!context.mounted) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -766,7 +811,7 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                                   color: AppColors.amarilloSol,
                                 ),
                               ),
-                            ] else ...[
+                            ] else if (_isPersisted) ...[
                               const Icon(
                                 Icons.check_circle,
                                 size: 15,
@@ -779,6 +824,25 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.statusGreenText,
+                                ),
+                              ),
+                            ] else ...[
+                              Icon(
+                                Icons.edit_note,
+                                size: 16,
+                                color: isDark
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.textSecondaryLight,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'SIN GUARDAR',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? AppColors.textSecondaryDark
+                                      : AppColors.textSecondaryLight,
                                 ),
                               ),
                             ],
