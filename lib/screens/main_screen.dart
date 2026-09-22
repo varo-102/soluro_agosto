@@ -120,128 +120,111 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
         child: SafeArea(
-          child: SizedBox(
-            height: 64,
+          child: Container(
+            height: 68,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // 1. QR
-                Expanded(
-                  child: InkWell(
-                    onTap: () => _onTabTapped(0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          _currentIndex == 0
-                              ? Icons.qr_code_2
-                              : Icons.qr_code_2_outlined,
-                          size: 24,
-                          color: _currentIndex == 0
-                              ? (isDark
-                                  ? AppColors.amarilloSol
-                                  : AppColors.azulProfundo)
-                              : Colors.grey.shade500,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'QR',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: _currentIndex == 0
-                                ? FontWeight.bold
-                                : FontWeight.w500,
-                            color: _currentIndex == 0
-                                ? (isDark
-                                    ? AppColors.amarilloSol
-                                    : AppColors.azulProfundo)
-                                : Colors.grey.shade500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                _buildNavItem(
+                  index: 0,
+                  icon: _currentIndex == 0
+                      ? Icons.qr_code_2
+                      : Icons.qr_code_2_outlined,
+                  label: 'QR',
+                  isDark: isDark,
                 ),
-
-                // 2. COTIZACIONES (Destacada al centro con cápsula amarilla)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: GestureDetector(
-                    onTap: () => _onTabTapped(1),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.amarilloSol,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                AppColors.amarilloSol.withValues(alpha: 0.4),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(
-                            Icons.request_quote,
-                            size: 20,
-                            color: AppColors.azulProfundo,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            'Cotizaciones',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.azulProfundo,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                const SizedBox(width: 8),
+                _buildNavItem(
+                  index: 1,
+                  icon: _currentIndex == 1
+                      ? Icons.request_quote
+                      : Icons.request_quote_outlined,
+                  label: 'Cotizaciones',
+                  isDark: isDark,
                 ),
+                const SizedBox(width: 8),
+                _buildNavItem(
+                  index: 2,
+                  icon: _currentIndex == 2
+                      ? Icons.storefront
+                      : Icons.storefront_outlined,
+                  label: 'Mis direcciones',
+                  isDark: isDark,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-                // 3. MIS DIRECCIONES
-                Expanded(
-                  child: InkWell(
-                    onTap: () => _onTabTapped(2),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          _currentIndex == 2
-                              ? Icons.storefront
-                              : Icons.storefront_outlined,
-                          size: 24,
-                          color: _currentIndex == 2
-                              ? (isDark
-                                  ? AppColors.amarilloSol
-                                  : AppColors.azulProfundo)
-                              : Colors.grey.shade500,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Mis direcciones',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: _currentIndex == 2
-                                ? FontWeight.bold
-                                : FontWeight.w500,
-                            color: _currentIndex == 2
-                                ? (isDark
-                                    ? AppColors.amarilloSol
-                                    : AppColors.azulProfundo)
-                                : Colors.grey.shade500,
-                          ),
-                        ),
-                      ],
-                    ),
+  Widget _buildNavItem({
+    required int index,
+    required IconData icon,
+    required String label,
+    required bool isDark,
+  }) {
+    final bool isActive = _currentIndex == index;
+
+    return Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _onTabTapped(index),
+          borderRadius: BorderRadius.circular(10),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+            decoration: BoxDecoration(
+              color: isActive ? AppColors.amarilloSol : Colors.transparent,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: isActive
+                    ? AppColors.amarilloSol
+                    : (isDark
+                        ? const Color(0xFF43474D)
+                        : const Color(0xFFD0D5DD)),
+                width: 1.2,
+              ),
+              boxShadow: isActive
+                  ? [
+                      BoxShadow(
+                        color: AppColors.amarilloSol.withValues(alpha: 0.35),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 22,
+                  color: isActive
+                      ? AppColors.azulProfundo
+                      : (isDark
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondaryLight),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+                    color: isActive
+                        ? AppColors.azulProfundo
+                        : (isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight),
                   ),
                 ),
               ],
