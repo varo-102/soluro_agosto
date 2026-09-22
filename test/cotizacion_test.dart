@@ -1,8 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soluro/models/cotizacion_model.dart';
+import 'package:soluro/models/direccion_model.dart';
+import 'package:soluro/models/qr_code_model.dart';
 import 'package:soluro/models/sync_status.dart';
 import 'package:soluro/repositories/data_repository.dart';
 import 'package:soluro/repositories/local_data_repository.dart';
+import 'package:soluro/screens/cotizaciones/cotizacion_history_screen.dart';
 import 'package:soluro/services/cotizacion_pdf_service.dart';
 import 'package:soluro/services/database_helper.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -361,4 +365,119 @@ void main() {
       expect(header, equals('%PDF'));
     });
   });
+
+  group('Historial Date Range Filtering Tests', () {
+    test('Date range filtering logic correctly includes and excludes dates', () {
+      final now = DateTime(2026, 9, 22, 14, 30);
+      final yesterday = DateTime(2026, 9, 21, 10, 0);
+      final lastWeek = DateTime(2026, 9, 15, 9, 0);
+      final lastMonth = DateTime(2026, 8, 10, 11, 0);
+
+      final list = [
+        CotizacionModel(numero: 1, titulo: 'Cot 1 Hoy', updatedAt: now),
+        CotizacionModel(numero: 2, titulo: 'Cot 2 Ayer', updatedAt: yesterday),
+        CotizacionModel(numero: 3, titulo: 'Cot 3 Sem Pasada', updatedAt: lastWeek),
+        CotizacionModel(numero: 4, titulo: 'Cot 4 Mes Pasado', updatedAt: lastMonth),
+      ];
+
+      // Filter: 21 to 22 Sept
+      final range = DateTimeRange(
+        start: DateTime(2026, 9, 21),
+        end: DateTime(2026, 9, 22),
+      );
+      final start = DateTime(range.start.year, range.start.month, range.start.day, 0, 0, 0);
+      final end = DateTime(range.end.year, range.end.month, range.end.day, 23, 59, 59, 999);
+
+      final filtered = list.where((c) {
+        return !c.updatedAt.isBefore(start) && !c.updatedAt.isAfter(end);
+      }).toList();
+
+      expect(filtered.length, equals(2));
+      expect(filtered.map((c) => c.numero), containsAll([1, 2]));
+      expect(filtered.map((c) => c.numero), isNot(contains(3)));
+      expect(filtered.map((c) => c.numero), isNot(contains(4)));
+    });
+
+    testWidgets('CotizacionHistoryScreen renders search bar and Filtrar button', (tester) async {
+      final fakeRepo = FakeCotizacionRepository();
+      fakeRepo.cotizaciones = [
+        CotizacionModel(
+          numero: 1,
+          titulo: 'Cotización ABC',
+          notas: 'Para cliente importante',
+          updatedAt: DateTime.now(),
+        ),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CotizacionHistoryScreen(repository: fakeRepo),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Historial de Cotizaciones'), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
+      expect(find.text('Filtrar'), findsOneWidget);
+      expect(find.text('1 Cotización encontrada'), findsOneWidget);
+      expect(find.text('Cotización ABC'), findsOneWidget);
+
+      // Open filter dialog by tapping "Filtrar" button
+      await tester.tap(find.text('Filtrar'));
+      await tester.pumpAndSettle();
+
+      // Verify dialog opened with filter options
+      expect(find.text('Filtrar Cotizaciones'), findsOneWidget);
+      expect(find.text('Filtrar por Nombre o Contenido'), findsOneWidget);
+      expect(find.text('Filtrar por Rango de Fechas'), findsOneWidget);
+      expect(find.text('Hoy'), findsOneWidget);
+      expect(find.text('Últimos 7 días'), findsOneWidget);
+      expect(find.text('Este mes'), findsOneWidget);
+      expect(find.text('Limpiar Todo'), findsOneWidget);
+      expect(find.text('Aplicar'), findsOneWidget);
+    });
+  });
 }
+
+class FakeCotizacionRepository implements DataRepository {
+  List<CotizacionModel> cotizaciones = [];
+
+  @override
+  Future<List<CotizacionModel>> getCotizaciones({bool includeDeleted = false}) async {
+    return List.from(cotizaciones);
+  }
+
+  @override
+  Future<CotizacionModel?> getCotizacionById(String id) async => null;
+  @override
+  Future<void> saveCotizacion(CotizacionModel cotizacion) async {
+    cotizaciones.add(cotizacion);
+  }
+  @override
+  Future<void> deleteCotizacion(String id) async {
+    cotizaciones.removeWhere((c) => c.id == id);
+  }
+  @override
+  Future<CotizacionModel> duplicateCotizacion(String id) async => cotizaciones.first;
+  @override
+  Future<int> getNextCotizacionNumero() async => 1;
+
+  @override
+  Future<List<QRCodeModel>> getQRCodes({bool includeDeleted = false}) async => [];
+  @override
+  Future<QRCodeModel?> getQRCodeById(String id) async => null;
+  @override
+  Future<void> saveQRCode(QRCodeModel qrCode) async {}
+  @override
+  Future<void> deleteQRCode(String id) async {}
+
+  @override
+  Future<List<DireccionModel>> getDirecciones({bool includeDeleted = false}) async => [];
+  @override
+  Future<DireccionModel?> getDireccionById(String id) async => null;
+  @override
+  Future<void> saveDireccion(DireccionModel direccion) async {}
+  @override
+  Future<void> deleteDireccion(String id) async {}
+}
+
