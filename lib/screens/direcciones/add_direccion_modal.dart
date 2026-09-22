@@ -107,115 +107,124 @@ class _AddDireccionModalState extends State<AddDireccionModal> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.direccionToEdit != null;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: 20,
-        right: 20,
-        top: 20,
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    isEditing ? 'Editar Dirección' : 'Añadir Dirección',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.azulProfundo,
+      backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      clipBehavior: Clip.antiAlias,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      isEditing ? 'Editar Dirección' : 'Añadir Dirección',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                      ),
                     ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color: isDark ? Colors.white : AppColors.azulProfundo,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Título
+                TextFormField(
+                  controller: _tituloController,
+                  decoration: const InputDecoration(
+                    labelText: 'Título de la Ubicación',
+                    hintText: 'Ej. Sucursal Central, Almacén 2...',
+                    prefixIcon: Icon(Icons.storefront),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Ingresa un título para la dirección';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+
+                // Detalle
+                TextFormField(
+                  controller: _detalleController,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    labelText: 'Detalle de la dirección',
+                    hintText: 'Calle, número, piso, referencias de llegada...',
+                    prefixIcon: Icon(Icons.location_on),
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Ingresa el detalle de la dirección';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
 
-              // Título
-              TextFormField(
-                controller: _tituloController,
-                decoration: const InputDecoration(
-                  labelText: 'Título de la Ubicación',
-                  hintText: 'Ej. Sucursal Central, Almacén 2...',
-                  prefixIcon: Icon(Icons.storefront),
+                // URL Google Maps
+                TextFormField(
+                  controller: _urlMapsController,
+                  decoration: const InputDecoration(
+                    labelText: 'Ubicación de Google Maps (Enlace)',
+                    hintText: 'https://maps.google.com/?q=...',
+                    prefixIcon: Icon(Icons.map),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Ingresa el enlace de Google Maps';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Ingresa un título para la dirección';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
+                const SizedBox(height: 24),
 
-              // Detalle
-              TextFormField(
-                controller: _detalleController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Detalle de la dirección',
-                  hintText: 'Calle, número, piso, referencias de llegada...',
-                  prefixIcon: Icon(Icons.location_on),
+                // Save Button
+                ElevatedButton.icon(
+                  onPressed: _isSaving ? null : _saveDireccion,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.amarilloSol,
+                    foregroundColor: AppColors.azulProfundo,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  icon: _isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Icon(isEditing ? Icons.check : Icons.save),
+                  label: Text(
+                    _isSaving
+                        ? 'Guardando...'
+                        : (isEditing ? 'Actualizar Dirección' : 'Guardar Dirección'),
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Ingresa el detalle de la dirección';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-
-              // URL Google Maps
-              TextFormField(
-                controller: _urlMapsController,
-                decoration: const InputDecoration(
-                  labelText: 'Ubicación de Google Maps (Enlace)',
-                  hintText: 'https://maps.google.com/?q=...',
-                  prefixIcon: Icon(Icons.map),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Ingresa el enlace de Google Maps';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-
-              // Save Button
-              ElevatedButton.icon(
-                onPressed: _isSaving ? null : _saveDireccion,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.amarilloSol,
-                  foregroundColor: AppColors.azulProfundo,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                icon: _isSaving
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Icon(isEditing ? Icons.check : Icons.save),
-                label: Text(
-                  _isSaving
-                      ? 'Guardando...'
-                      : (isEditing ? 'Actualizar Dirección' : 'Guardar Dirección'),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
+              ],
+            ),
           ),
         ),
       ),

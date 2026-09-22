@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soluro/models/direccion_model.dart';
 import 'package:soluro/models/qr_code_model.dart';
@@ -5,6 +6,8 @@ import 'package:soluro/models/sync_status.dart';
 import 'package:soluro/repositories/data_repository.dart';
 import 'package:soluro/repositories/local_data_repository.dart';
 import 'package:soluro/repositories/sync_data_repository.dart';
+import 'package:soluro/screens/direcciones/add_direccion_modal.dart';
+import 'package:soluro/screens/qr/add_qr_modal.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:soluro/services/database_helper.dart';
 
@@ -201,6 +204,42 @@ void main() {
     test('SyncDataRepository implements DataRepository contract and delegates correctly', () async {
       final syncRepo = SyncDataRepository();
       expect(syncRepo, isA<DataRepository>());
+    });
+  });
+
+  group('Centered Dialog Tests', () {
+    testWidgets('AddQRModal renders as Dialog with expected title and button', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AddQRModal(
+              onQRSaved: () {},
+              repository: LocalDataRepository(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Dialog), findsOneWidget);
+      expect(find.text('Añadir Nuevo QR'), findsOneWidget);
+      expect(find.text('Guardar QR'), findsOneWidget);
+    });
+
+    testWidgets('AddDireccionModal renders as Dialog with expected title and button', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AddDireccionModal(
+              onDireccionSaved: () {},
+              repository: LocalDataRepository(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(Dialog), findsOneWidget);
+      expect(find.text('Añadir Dirección'), findsOneWidget);
+      expect(find.text('Guardar Dirección'), findsOneWidget);
     });
   });
 }

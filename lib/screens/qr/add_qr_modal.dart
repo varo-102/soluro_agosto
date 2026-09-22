@@ -195,187 +195,210 @@ class _AddQRModalState extends State<AddQRModal> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isEditing = widget.qrToEdit != null;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: 20,
-        right: 20,
-        top: 20,
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    isEditing ? 'Editar Código QR' : 'Añadir Nuevo QR',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.azulProfundo,
+      backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      clipBehavior: Clip.antiAlias,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      isEditing ? 'Editar Código QR' : 'Añadir Nuevo QR',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Image Selector Container
-              GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  height: 160,
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.surfaceDark : AppColors.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: _selectedImage == null ? Colors.grey.shade300 : AppColors.amarilloSol,
-                      width: 2,
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color: isDark ? Colors.white : AppColors.azulProfundo,
+                      ),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                  ),
-                  child: _selectedImage != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child: Image.file(
-                            _selectedImage!,
-                            fit: BoxFit.contain,
-                          ),
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              Icons.add_photo_alternate_rounded,
-                              size: 48,
-                              color: AppColors.azulProfundo,
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Seleccionar imagen de QR',
-                              style: TextStyle(
-                                color: AppColors.azulProfundo,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              'Galería o gestor de archivos',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 16),
-
-              // Banco / Institución
-              TextFormField(
-                controller: _bancoController,
-                decoration: const InputDecoration(
-                  labelText: 'Banco / Institución',
-                  hintText: 'Ej. Banco BISA, BNB, Mercantil...',
-                  prefixIcon: Icon(Icons.account_balance),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Ingresa el nombre del banco o institución';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-
-              // Referencia
-              TextFormField(
-                controller: _referenciaController,
-                decoration: const InputDecoration(
-                  labelText: 'Referencia / Descripción',
-                  hintText: 'Ej. Nº de cuenta, Cobro de servicios...',
-                  prefixIcon: Icon(Icons.description),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Ingresa una referencia o descripción';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-
-              // Expiration Date Selector
-              InkWell(
-                onTap: _selectDate,
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.event, color: AppColors.azulProfundo),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 16),
+                // Image Selector Container
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: Container(
+                    height: 160,
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.cardDark : AppColors.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: _selectedImage == null
+                            ? (isDark ? const Color(0xFF43474D) : Colors.grey.shade300)
+                            : AppColors.amarilloSol,
+                        width: 2,
+                      ),
+                    ),
+                    child: _selectedImage != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: Image.file(
+                              _selectedImage!,
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
-                                'Fecha de Expiración',
-                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                              Icon(
+                                Icons.add_photo_alternate_rounded,
+                                size: 48,
+                                color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
                               ),
+                              const SizedBox(height: 8),
                               Text(
-                                dateFormat.format(_expirationDate),
-                                style: const TextStyle(
-                                  fontSize: 16,
+                                'Seleccionar imagen de QR',
+                                style: TextStyle(
+                                  color: isDark ? Colors.white : AppColors.azulProfundo,
                                   fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const Text(
+                                'Galería o gestor de archivos',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      const Icon(Icons.arrow_drop_down),
-                    ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-              // Save Button
-              ElevatedButton.icon(
-                onPressed: _isSaving ? null : _saveQR,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.amarilloSol,
-                  foregroundColor: AppColors.azulProfundo,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                // Banco / Institución
+                TextFormField(
+                  controller: _bancoController,
+                  decoration: const InputDecoration(
+                    labelText: 'Banco / Institución',
+                    hintText: 'Ej. Banco BISA, BNB, Mercantil...',
+                    prefixIcon: Icon(Icons.account_balance),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Ingresa el nombre del banco o institución';
+                    }
+                    return null;
+                  },
                 ),
-                icon: _isSaving
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Icon(isEditing ? Icons.check : Icons.save),
-                label: Text(
-                  _isSaving
-                      ? 'Guardando...'
-                      : (isEditing ? 'Actualizar QR' : 'Guardar QR'),
+                const SizedBox(height: 12),
+
+                // Referencia
+                TextFormField(
+                  controller: _referenciaController,
+                  decoration: const InputDecoration(
+                    labelText: 'Referencia / Descripción',
+                    hintText: 'Ej. Nº de cuenta, Cobro de servicios...',
+                    prefixIcon: Icon(Icons.description),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Ingresa una referencia o descripción';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 12),
+
+                // Expiration Date Selector
+                InkWell(
+                  onTap: _selectDate,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: isDark ? const Color(0xFF43474D) : Colors.grey.shade300,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.event,
+                              color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                            ),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Fecha de Expiración',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                ),
+                                Text(
+                                  dateFormat.format(_expirationDate),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const Icon(Icons.arrow_drop_down),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Save Button
+                ElevatedButton.icon(
+                  onPressed: _isSaving ? null : _saveQR,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.amarilloSol,
+                    foregroundColor: AppColors.azulProfundo,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: _isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Icon(isEditing ? Icons.check : Icons.save),
+                  label: Text(
+                    _isSaving
+                        ? 'Guardando...'
+                        : (isEditing ? 'Actualizar QR' : 'Guardar QR'),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

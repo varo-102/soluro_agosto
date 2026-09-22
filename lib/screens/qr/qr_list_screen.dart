@@ -74,13 +74,9 @@ class QRListScreenState extends State<QRListScreen> {
   }
 
   void _showAddModal() {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      barrierDismissible: true,
       builder: (context) => AddQRModal(
         onQRSaved: loadQRCodes,
         repository: _repository,
@@ -89,13 +85,9 @@ class QRListScreenState extends State<QRListScreen> {
   }
 
   void _showEditModal(QRCodeModel qr) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      barrierDismissible: true,
       builder: (context) => AddQRModal(
         qrToEdit: qr,
         onQRSaved: loadQRCodes,

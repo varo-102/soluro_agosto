@@ -88,13 +88,9 @@ class _DireccionesListScreenState extends State<DireccionesListScreen> {
   }
 
   void _showAddModal() {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      barrierDismissible: true,
       builder: (context) => AddDireccionModal(
         onDireccionSaved: loadDirecciones,
         repository: _repository,
@@ -103,13 +99,9 @@ class _DireccionesListScreenState extends State<DireccionesListScreen> {
   }
 
   void _showEditModal(DireccionModel direccion) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      barrierDismissible: true,
       builder: (context) => AddDireccionModal(
         direccionToEdit: direccion,
         onDireccionSaved: loadDirecciones,
