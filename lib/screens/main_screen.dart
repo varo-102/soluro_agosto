@@ -4,10 +4,13 @@ import 'qr/qr_list_screen.dart';
 import 'direcciones/direcciones_list_screen.dart';
 import 'cotizaciones/cotizacion_screen.dart';
 
+import '../repositories/data_repository.dart';
+
 class MainScreen extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeNotifier;
+  final DataRepository? repository;
 
-  const MainScreen({super.key, required this.themeNotifier});
+  const MainScreen({super.key, required this.themeNotifier, this.repository});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -25,7 +28,13 @@ class _MainScreenState extends State<MainScreen> {
       // SIEMPRE que se presiona el botón inferior de "Cotizaciones",
       // se genera y muestra una nueva cotización en blanco.
       _cotizacionKey.currentState?.resetToNew();
+    } else {
+      // Ocultar banner de cotizaciones al cambiar a otra pestaña (QR o Mis Direcciones)
+      _cotizacionKey.currentState?.hideBanner();
     }
+    // Asegurar que ningún SnackBar residual quede en la pantalla principal al cambiar de pestaña
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
     setState(() {
       _currentIndex = index;
     });
@@ -37,7 +46,7 @@ class _MainScreenState extends State<MainScreen> {
 
     final pages = [
       QRListScreen(key: _qrListKey),
-      CotizacionScreen(key: _cotizacionKey),
+      CotizacionScreen(key: _cotizacionKey, repository: widget.repository),
       const DireccionesListScreen(),
     ];
 

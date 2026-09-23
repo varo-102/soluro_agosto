@@ -39,6 +39,9 @@ class _ItemControllers {
 }
 
 class CotizacionScreenState extends State<CotizacionScreen> {
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
   DataRepository get _repository =>
       widget.repository ?? RepositoryProvider.instance;
 
@@ -151,7 +154,11 @@ class CotizacionScreenState extends State<CotizacionScreen> {
         });
 
         if (!silent) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          final messenger = _scaffoldMessengerKey.currentState ??
+              ScaffoldMessenger.maybeOf(context);
+          messenger?.clearSnackBars();
+          messenger?.removeCurrentSnackBar();
+          messenger?.showSnackBar(
             SnackBar(
               backgroundColor: AppColors.azulProfundo,
               content: Text(
@@ -178,7 +185,9 @@ class CotizacionScreenState extends State<CotizacionScreen> {
           _isSaving = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
+        final messenger = _scaffoldMessengerKey.currentState ??
+            ScaffoldMessenger.maybeOf(context);
+        messenger?.showSnackBar(
           SnackBar(
             backgroundColor: Colors.red.shade800,
             content: Text('Aviso al iniciar cotización: $e'),
@@ -187,6 +196,14 @@ class CotizacionScreenState extends State<CotizacionScreen> {
         );
       }
     }
+  }
+
+  /// Oculta inmediatamente el banner o SnackBar de cotización activa
+  void hideBanner() {
+    final messenger = _scaffoldMessengerKey.currentState ??
+        ScaffoldMessenger.maybeOf(context);
+    messenger?.clearSnackBars();
+    messenger?.removeCurrentSnackBar();
   }
 
   void _onItemChanged(int index) {
@@ -263,7 +280,9 @@ class CotizacionScreenState extends State<CotizacionScreen> {
           _isSaving = false;
         });
         if (showReassurance) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          final messenger = _scaffoldMessengerKey.currentState ??
+              ScaffoldMessenger.maybeOf(context);
+          messenger?.showSnackBar(
             const SnackBar(
               backgroundColor: AppColors.azulProfundo,
               content: Text(
@@ -278,7 +297,9 @@ class CotizacionScreenState extends State<CotizacionScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
+        final messenger = _scaffoldMessengerKey.currentState ??
+            ScaffoldMessenger.maybeOf(context);
+        messenger?.showSnackBar(
           SnackBar(content: Text('Error al guardar cotización: $e')),
         );
       }
@@ -288,7 +309,9 @@ class CotizacionScreenState extends State<CotizacionScreen> {
   /// Duplica la cotización actual
   Future<void> _duplicateCurrentCotizacion() async {
     if (!_isPersisted && !_currentCotizacion.tieneArticuloValidoParaGuardado) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      final messenger = _scaffoldMessengerKey.currentState ??
+          ScaffoldMessenger.maybeOf(context);
+      messenger?.showSnackBar(
         const SnackBar(
           content: Text(
             'Ingresa al menos un artículo con nombre, cantidad y precio para duplicar la cotización',
@@ -307,7 +330,9 @@ class CotizacionScreenState extends State<CotizacionScreen> {
           await _repository.duplicateCotizacion(_currentCotizacion.id);
       loadCotizacion(duplicated);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        final messenger = _scaffoldMessengerKey.currentState ??
+            ScaffoldMessenger.maybeOf(context);
+        messenger?.showSnackBar(
           SnackBar(
             backgroundColor: AppColors.azulProfundo,
             content: Text('Cotización duplicada: "${duplicated.titulo}"'),
@@ -317,7 +342,9 @@ class CotizacionScreenState extends State<CotizacionScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        final messenger = _scaffoldMessengerKey.currentState ??
+            ScaffoldMessenger.maybeOf(context);
+        messenger?.showSnackBar(
           SnackBar(content: Text('Error al duplicar cotización: $e')),
         );
       }
@@ -538,9 +565,12 @@ class CotizacionScreenState extends State<CotizacionScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(color: AppColors.azulProfundo),
+      return ScaffoldMessenger(
+        key: _scaffoldMessengerKey,
+        child: const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(color: AppColors.azulProfundo),
+          ),
         ),
       );
     }
@@ -548,7 +578,9 @@ class CotizacionScreenState extends State<CotizacionScreen> {
     final totalUnidades = _currentCotizacion.totalUnidades;
     final montoTotal = _currentCotizacion.montoTotal;
 
-    return Scaffold(
+    return ScaffoldMessenger(
+      key: _scaffoldMessengerKey,
+      child: Scaffold(
       backgroundColor: isDark ? AppColors.backgroundDark : AppColors.surfaceMuted,
       appBar: AppBar(
         titleSpacing: 16,
@@ -1477,6 +1509,7 @@ class CotizacionScreenState extends State<CotizacionScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
