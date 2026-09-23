@@ -575,7 +575,7 @@ class CotizacionScreenState extends State<CotizacionScreen> {
             ),
             const SizedBox(width: 10),
             Text(
-              'Negociar',
+              'Cotizaciones',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
