@@ -468,6 +468,8 @@ class CotizacionScreenState extends State<CotizacionScreen> {
       return;
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -479,24 +481,34 @@ class CotizacionScreenState extends State<CotizacionScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Añadir Fotografía de Respaldo',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.azulProfundo,
+                  color: isDark
+                      ? AppColors.amarilloSol
+                      : AppColors.azulProfundo,
                 ),
               ),
               const SizedBox(height: 12),
               ListTile(
-                leading: const Icon(Icons.camera_alt,
-                    color: AppColors.azulProfundo),
+                leading: Icon(
+                  Icons.camera_alt,
+                  color: isDark
+                      ? AppColors.amarilloSol
+                      : AppColors.azulProfundo,
+                ),
                 title: const Text('Tomar foto con la cámara'),
                 onTap: () => Navigator.pop(context, ImageSource.camera),
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library,
-                    color: AppColors.azulProfundo),
+                leading: Icon(
+                  Icons.photo_library,
+                  color: isDark
+                      ? AppColors.amarilloSol
+                      : AppColors.azulProfundo,
+                ),
                 title: const Text('Elegir de la galería'),
                 onTap: () => Navigator.pop(context, ImageSource.gallery),
               ),
@@ -703,15 +715,22 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: _duplicateCurrentCotizacion,
-                    icon: const Icon(Icons.content_copy,
-                        size: 16, color: AppColors.azulProfundo),
-                    label: const Text(
+                    icon: Icon(
+                      Icons.content_copy,
+                      size: 16,
+                      color: isDark ? Colors.white : AppColors.azulProfundo,
+                    ),
+                    label: Text(
                       'Duplicar',
-                      style: TextStyle(color: AppColors.azulProfundo),
+                      style: TextStyle(
+                        color: isDark ? Colors.white : AppColors.azulProfundo,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
                           isDark ? AppColors.cardDark : Colors.white,
+                      foregroundColor:
+                          isDark ? Colors.white : AppColors.azulProfundo,
                       elevation: 1,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
@@ -892,7 +911,7 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                         ? AppColors.surfaceDark
                         : AppColors.surfaceMuted,
                     child: Row(
-                      children: const [
+                      children: [
                         SizedBox(
                           width: 24,
                           child: Text(
@@ -901,18 +920,22 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF64748B),
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : const Color(0xFF64748B),
                             ),
                           ),
                         ),
-                        SizedBox(width: 6),
+                        const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             'ARTÍCULO',
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF64748B),
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : const Color(0xFF64748B),
                             ),
                           ),
                         ),
@@ -924,11 +947,13 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF64748B),
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : const Color(0xFF64748B),
                             ),
                           ),
                         ),
-                        SizedBox(width: 6),
+                        const SizedBox(width: 6),
                         SizedBox(
                           width: 42,
                           child: Text(
@@ -937,11 +962,13 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF64748B),
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : const Color(0xFF64748B),
                             ),
                           ),
                         ),
-                        SizedBox(width: 6),
+                        const SizedBox(width: 6),
                         SizedBox(
                           width: 75,
                           child: Text(
@@ -950,7 +977,9 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.azulProfundo,
+                              color: isDark
+                                  ? AppColors.amarilloSol
+                                  : AppColors.azulProfundo,
                             ),
                           ),
                         ),
@@ -1223,15 +1252,22 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () => _addArticles(1),
-                    icon: const Icon(Icons.add,
-                        size: 16, color: AppColors.azulProfundo),
-                    label: const Text(
+                    icon: Icon(
+                      Icons.add,
+                      size: 16,
+                      color: isDark ? Colors.white : AppColors.azulProfundo,
+                    ),
+                    label: Text(
                       'Artículo',
-                      style: TextStyle(color: AppColors.azulProfundo),
+                      style: TextStyle(
+                        color: isDark ? Colors.white : AppColors.azulProfundo,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
                           isDark ? AppColors.cardDark : Colors.white,
+                      foregroundColor:
+                          isDark ? Colors.white : AppColors.azulProfundo,
                       elevation: 1,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
@@ -1253,15 +1289,22 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () => _addArticles(5),
-                    icon: const Icon(Icons.library_add,
-                        size: 16, color: AppColors.azulProfundo),
-                    label: const Text(
+                    icon: Icon(
+                      Icons.library_add,
+                      size: 16,
+                      color: isDark ? Colors.white : AppColors.azulProfundo,
+                    ),
+                    label: Text(
                       '5 Artículos',
-                      style: TextStyle(color: AppColors.azulProfundo),
+                      style: TextStyle(
+                        color: isDark ? Colors.white : AppColors.azulProfundo,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
                           isDark ? AppColors.cardDark : Colors.white,
+                      foregroundColor:
+                          isDark ? Colors.white : AppColors.azulProfundo,
                       elevation: 1,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
@@ -1283,15 +1326,22 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: _addPhotoModal,
-                    icon: const Icon(Icons.photo_library,
-                        size: 16, color: AppColors.azulProfundo),
+                    icon: Icon(
+                      Icons.photo_library,
+                      size: 16,
+                      color: isDark ? Colors.white : AppColors.azulProfundo,
+                    ),
                     label: Text(
                       '+ Fotos (${_currentCotizacion.fotos.length}/6)',
-                      style: const TextStyle(color: AppColors.azulProfundo),
+                      style: TextStyle(
+                        color: isDark ? Colors.white : AppColors.azulProfundo,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
                           isDark ? AppColors.cardDark : Colors.white,
+                      foregroundColor:
+                          isDark ? Colors.white : AppColors.azulProfundo,
                       elevation: 1,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(

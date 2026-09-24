@@ -1105,16 +1105,28 @@ class _CotizacionHistoryScreenState extends State<CotizacionHistoryScreen> {
                                             child: OutlinedButton.icon(
                                               onPressed: () =>
                                                   _duplicateCotizacion(cot),
-                                              icon: const Icon(
+                                              icon: Icon(
                                                   Icons.content_copy,
-                                                  size: 15),
-                                              label: const Text('Duplicar'),
+                                                  size: 15,
+                                                  color: isDark
+                                                      ? Colors.white
+                                                      : AppColors.azulProfundo),
+                                              label: Text(
+                                                'Duplicar',
+                                                style: TextStyle(
+                                                  color: isDark
+                                                      ? Colors.white
+                                                      : AppColors.azulProfundo,
+                                                ),
+                                              ),
                                               style: OutlinedButton.styleFrom(
-                                                foregroundColor:
-                                                    AppColors.azulProfundo,
-                                                side: const BorderSide(
-                                                    color:
-                                                        AppColors.azulProfundo),
+                                                foregroundColor: isDark
+                                                    ? Colors.white
+                                                    : AppColors.azulProfundo,
+                                                side: BorderSide(
+                                                    color: isDark
+                                                        ? const Color(0xFF43474D)
+                                                        : AppColors.azulProfundo),
                                                 padding: EdgeInsets.zero,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
