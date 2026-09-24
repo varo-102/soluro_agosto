@@ -10,11 +10,13 @@ import '../../services/image_compression_service.dart';
 import '../../theme/app_colors.dart';
 import 'cotizacion_history_screen.dart';
 import 'cotizacion_pdf_preview_screen.dart';
+import '../main_screen.dart';
 
 class CotizacionScreen extends StatefulWidget {
   final DataRepository? repository;
+  final ValueNotifier<ThemeMode>? themeNotifier;
 
-  const CotizacionScreen({super.key, this.repository});
+  const CotizacionScreen({super.key, this.repository, this.themeNotifier});
 
   @override
   State<CotizacionScreen> createState() => CotizacionScreenState();
@@ -44,6 +46,10 @@ class CotizacionScreenState extends State<CotizacionScreen> {
 
   DataRepository get _repository =>
       widget.repository ?? RepositoryProvider.instance;
+
+  ValueNotifier<ThemeMode>? get _themeNotifier =>
+      widget.themeNotifier ??
+      context.findAncestorWidgetOfExactType<MainScreen>()?.themeNotifier;
 
   final ImageCompressionService _imageService = ImageCompressionService();
 
@@ -598,74 +604,75 @@ class CotizacionScreenState extends State<CotizacionScreen> {
         titleSpacing: 16,
         backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
         elevation: 1,
-        title: Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                    color: AppColors.amarilloSol.withValues(alpha: 0.5),
-                    width: 1.5),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: Image.asset(
-                  'assets/images/soluro_logo_cream.png',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              'Cotizaciones',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          // Botón Historial (Píldora Azul Profundo)
-          Padding(
-            padding: const EdgeInsets.only(right: 14),
-            child: ElevatedButton(
-              onPressed: () async {
-                if (_debounceTimer?.isActive ?? false) {
-                  _debounceTimer?.cancel();
-                  await _saveCurrentCotizacion();
-                }
-                if (!context.mounted) return;
-                final selected = await Navigator.push<CotizacionModel>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        CotizacionHistoryScreen(repository: _repository),
-                  ),
-                );
-                if (selected != null) {
-                  loadCotizacion(selected);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.azulProfundo,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                elevation: 1,
-              ),
-              child: const Text(
-                'Historial',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-              ),
+        title: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+                color: AppColors.amarilloSol.withValues(alpha: 0.5),
+                width: 1.5),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: Image.asset(
+              'assets/images/soluro_logo_cream.png',
+              fit: BoxFit.cover,
             ),
           ),
+        ),
+        actions: [
+          // Botón Historial (Píldora Azul Profundo) a la izquierda del botón de modo oscuro
+          ElevatedButton(
+            onPressed: () async {
+              if (_debounceTimer?.isActive ?? false) {
+                _debounceTimer?.cancel();
+                await _saveCurrentCotizacion();
+              }
+              if (!context.mounted) return;
+              final selected = await Navigator.push<CotizacionModel>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      CotizacionHistoryScreen(repository: _repository),
+                ),
+              );
+              if (selected != null) {
+                loadCotizacion(selected);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.azulProfundo,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              elevation: 1,
+            ),
+            child: const Text(
+              'Historial',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            ),
+          ),
+          // Botón de modo oscuro en la esquina superior derecha (misma posición que QR y Mis Direcciones)
+          IconButton(
+            icon: Icon(
+              isDark ? Icons.light_mode : Icons.dark_mode,
+              color:
+                  isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+            ),
+            tooltip: 'Cambiar Tema',
+            onPressed: () {
+              final notifier = _themeNotifier;
+              if (notifier != null) {
+                notifier.value =
+                    isDark ? ThemeMode.light : ThemeMode.dark;
+              }
+            },
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(

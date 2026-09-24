@@ -46,7 +46,11 @@ class _MainScreenState extends State<MainScreen> {
 
     final pages = [
       QRListScreen(key: _qrListKey),
-      CotizacionScreen(key: _cotizacionKey, repository: widget.repository),
+      CotizacionScreen(
+        key: _cotizacionKey,
+        repository: widget.repository,
+        themeNotifier: widget.themeNotifier,
+      ),
       const DireccionesListScreen(),
     ];
 
