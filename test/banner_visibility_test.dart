@@ -75,6 +75,40 @@ void main() {
     expect(find.text('Nueva Cotización 21 iniciada'), findsNothing);
   });
 
+  testWidgets('CotizacionScreen handles very long title without RenderFlex overflow and displays ellipsis', (tester) async {
+    final mockRepo = MockDataRepository();
+    final cotKey = GlobalKey<CotizacionScreenState>();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CotizacionScreen(
+            key: cotKey,
+            repository: mockRepo,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Set an extremely long title that would normally overflow the screen
+    const longTitle = 'Cotización 10sdfa sdfasdfasdfasdfsadfsadfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf';
+    cotKey.currentState?.loadCotizacion(
+      cotKey.currentState!.currentCotizacion.copyWith(titulo: longTitle),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Verify widget builds without overflow and text widget is found with ellipsis
+    final titleTextFinder = find.text(longTitle);
+    expect(titleTextFinder, findsOneWidget);
+    final textWidget = tester.widget<Text>(titleTextFinder);
+    expect(textWidget.overflow, equals(TextOverflow.ellipsis));
+    expect(textWidget.maxLines, equals(1));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('MainScreen tab switching hides cotizacion banner when navigating to QR or Mis direcciones', (tester) async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;

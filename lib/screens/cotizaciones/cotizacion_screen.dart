@@ -124,6 +124,9 @@ class CotizacionScreenState extends State<CotizacionScreen> {
     }
   }
 
+  /// Obtiene la cotización actual
+  CotizacionModel get currentCotizacion => _currentCotizacion;
+
   /// Carga una cotización específica en el estado de la pantalla
   void loadCotizacion(CotizacionModel cotizacion) {
     _debounceTimer?.cancel();
@@ -817,36 +820,47 @@ class CotizacionScreenState extends State<CotizacionScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Título y botón editar
-                        InkWell(
-                          onTap: _editTitleDialog,
-                          borderRadius: BorderRadius.circular(6),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 2),
-                            child: Row(
-                              children: [
-                                Text(
-                                  _currentCotizacion.titulo,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: isDark
-                                        ? AppColors.amarilloSol
-                                        : AppColors.azulProfundo,
-                                  ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                              onTap: _editTitleDialog,
+                              borderRadius: BorderRadius.circular(6),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4, vertical: 2),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        _currentCotizacion.titulo,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: isDark
+                                              ? AppColors.amarilloSol
+                                              : AppColors.azulProfundo,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                      color: isDark
+                                          ? AppColors.textSecondaryDark
+                                          : AppColors.textSecondaryLight,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 6),
-                                Icon(
-                                  Icons.edit,
-                                  size: 15,
-                                  color: isDark
-                                      ? AppColors.textSecondaryDark
-                                      : AppColors.textSecondaryLight,
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
+                        const SizedBox(width: 8),
 
                         // Indicador Guardado
                         Row(
