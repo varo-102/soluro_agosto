@@ -3,10 +3,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@android:color/white" />
 
-    <!-- Centered Soluro brand icon on splash screen -->
+    <!-- Centered Soluro brand logo on splash screen -->
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@drawable/splash_logo" />
     </item>
 </layer-list>
