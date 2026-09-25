@@ -126,41 +126,35 @@ class _MainScreenState extends State<MainScreen> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 12,
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
               offset: const Offset(0, -2),
             ),
           ],
         ),
         child: SafeArea(
-          child: Container(
-            height: 68,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          child: SizedBox(
+            height: 62,
             child: Row(
               children: [
                 _buildNavItem(
                   index: 0,
-                  icon: _currentIndex == 0
-                      ? Icons.qr_code_2
-                      : Icons.qr_code_2_outlined,
+                  activeIcon: Icons.dashboard,
+                  inactiveIcon: Icons.dashboard_outlined,
                   label: 'QR',
                   isDark: isDark,
                 ),
-                const SizedBox(width: 8),
                 _buildNavItem(
                   index: 1,
-                  icon: _currentIndex == 1
-                      ? Icons.request_quote
-                      : Icons.request_quote_outlined,
+                  activeIcon: Icons.request_quote,
+                  inactiveIcon: Icons.request_quote_outlined,
                   label: 'Cotizaciones',
                   isDark: isDark,
                 ),
-                const SizedBox(width: 8),
                 _buildNavItem(
                   index: 2,
-                  icon: _currentIndex == 2
-                      ? Icons.storefront
-                      : Icons.storefront_outlined,
+                  activeIcon: Icons.storefront,
+                  inactiveIcon: Icons.storefront_outlined,
                   label: 'Mis direcciones',
                   isDark: isDark,
                 ),
@@ -174,74 +168,49 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildNavItem({
     required int index,
-    required IconData icon,
+    required IconData activeIcon,
+    required IconData inactiveIcon,
     required String label,
     required bool isDark,
   }) {
     final bool isActive = _currentIndex == index;
+    final Color activeColor =
+        isDark ? AppColors.amarilloSol : AppColors.azulProfundo;
+    final Color inactiveColor =
+        isDark ? const Color(0xFF8E9199) : const Color(0xFF8A8D93);
+
+    final Color currentColor = isActive ? activeColor : inactiveColor;
+    final IconData currentIcon = isActive ? activeIcon : inactiveIcon;
 
     return Expanded(
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () => _onTabTapped(index),
-          borderRadius: BorderRadius.circular(10),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-            decoration: BoxDecoration(
-              color: isActive ? AppColors.amarilloSol : Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: isActive
-                    ? AppColors.amarilloSol
-                    : (isDark
-                        ? const Color(0xFF43474D)
-                        : const Color(0xFFD0D5DD)),
-                width: 1.2,
+          splashColor: activeColor.withValues(alpha: 0.1),
+          highlightColor: Colors.transparent,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                currentIcon,
+                size: 24,
+                color: currentColor,
               ),
-              boxShadow: isActive
-                  ? [
-                      BoxShadow(
-                        color: AppColors.amarilloSol.withValues(alpha: 0.35),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  size: 22,
-                  color: isActive
-                      ? AppColors.azulProfundo
-                      : (isDark
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondaryLight),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+                  color: currentColor,
                 ),
-                const SizedBox(height: 3),
-                Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-                    color: isActive
-                        ? AppColors.azulProfundo
-                        : (isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
