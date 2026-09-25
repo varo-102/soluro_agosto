@@ -12,7 +12,6 @@ class MockDataRepository implements DataRepository {
   @override
   Future<int> getNextCotizacionNumero() async => nextCotNumber;
 
-  @override
   Future<CotizacionModel> createNewCotizacion() async {
     return CotizacionModel.createEmpty(numero: nextCotNumber);
   }

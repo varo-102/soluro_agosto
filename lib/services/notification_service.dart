@@ -5,11 +5,20 @@ class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
+  Future<void>? _initFuture;
+  bool _isInitialized = false;
+
   factory NotificationService() => _instance;
 
   NotificationService._internal();
 
-  Future<void> init() async {
+  Future<void> init() {
+    if (_isInitialized) return Future.value();
+    _initFuture ??= _doInit();
+    return _initFuture!;
+  }
+
+  Future<void> _doInit() async {
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -23,10 +32,12 @@ class NotificationService {
     );
 
     await _notificationsPlugin.initialize(initSettings);
+    _isInitialized = true;
   }
 
   /// Checks a list of QR codes and shows local alerts if expiring in <= 7 days
   Future<void> checkExpirationNotifications(List<QRCodeModel> qrCodes) async {
+    await init();
     for (final qr in qrCodes) {
       final days = qr.daysRemaining;
       if (days == 7 || days == 5 || days == 3) {

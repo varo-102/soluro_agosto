@@ -18,12 +18,14 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 1; // Inicia en Cotizaciones (la sección central más importante)
+  late final Set<int> _loadedTabs = {_currentIndex};
   final GlobalKey<QRListScreenState> _qrListKey =
       GlobalKey<QRListScreenState>();
   final GlobalKey<CotizacionScreenState> _cotizacionKey =
       GlobalKey<CotizacionScreenState>();
 
   void _onTabTapped(int index) {
+    _loadedTabs.add(index);
     if (index == 1) {
       // SIEMPRE que se presiona el botón inferior de "Cotizaciones",
       // se genera y muestra una nueva cotización en blanco.
@@ -45,13 +47,19 @@ class _MainScreenState extends State<MainScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final pages = [
-      QRListScreen(key: _qrListKey),
-      CotizacionScreen(
-        key: _cotizacionKey,
-        repository: widget.repository,
-        themeNotifier: widget.themeNotifier,
-      ),
-      const DireccionesListScreen(),
+      _loadedTabs.contains(0)
+          ? QRListScreen(key: _qrListKey)
+          : const SizedBox.shrink(),
+      _loadedTabs.contains(1)
+          ? CotizacionScreen(
+              key: _cotizacionKey,
+              repository: widget.repository,
+              themeNotifier: widget.themeNotifier,
+            )
+          : const SizedBox.shrink(),
+      _loadedTabs.contains(2)
+          ? const DireccionesListScreen()
+          : const SizedBox.shrink(),
     ];
 
     return Scaffold(

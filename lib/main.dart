@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'repositories/repository_provider.dart';
-import 'services/database_helper.dart';
 import 'services/notification_service.dart';
 import 'services/quick_actions_service.dart';
 import 'screens/qr/full_screen_qr_viewer.dart';
 import 'theme/app_theme.dart';
 import 'screens/main_screen.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Local Notifications
-  await NotificationService().init();
-
-  // Pre-initialize Database
-  await DatabaseHelper().database;
-
+  // Iniciar la aplicación inmediatamente para renderizar el primer fotograma
   runApp(const SoluroApp());
+
+  // Inicializar servicios en segundo plano de manera no bloqueante
+  _initServicesAsync();
+}
+
+Future<void> _initServicesAsync() async {
+  try {
+    await NotificationService().init();
+  } catch (e) {
+    debugPrint('Error al inicializar NotificationService: $e');
+  }
 }
 
 class SoluroApp extends StatefulWidget {

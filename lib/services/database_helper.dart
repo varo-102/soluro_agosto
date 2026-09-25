@@ -11,6 +11,7 @@ import '../models/sync_status.dart';
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   static Database? _database;
+  static Future<Database>? _initDbFuture;
 
   factory DatabaseHelper() => _instance;
 
@@ -18,7 +19,8 @@ class DatabaseHelper {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDatabase();
+    _initDbFuture ??= _initDatabase();
+    _database = await _initDbFuture;
     return _database!;
   }
 
@@ -36,12 +38,7 @@ class DatabaseHelper {
       version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
-      onOpen: _onOpen,
     );
-  }
-
-  Future<void> _onOpen(Database db) async {
-    await _createCotizacionesTables(db);
   }
 
   Future<void> _onCreate(Database db, int version) async {
