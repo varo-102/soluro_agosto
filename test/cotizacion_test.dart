@@ -7,6 +7,7 @@ import 'package:soluro/models/sync_status.dart';
 import 'package:soluro/repositories/data_repository.dart';
 import 'package:soluro/repositories/local_data_repository.dart';
 import 'package:soluro/screens/cotizaciones/cotizacion_history_screen.dart';
+import 'package:soluro/screens/cotizaciones/cotizacion_pdf_preview_screen.dart';
 import 'package:soluro/services/cotizacion_pdf_service.dart';
 import 'package:soluro/services/database_helper.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -363,6 +364,40 @@ void main() {
       // PDF header magic bytes '%PDF'
       final header = String.fromCharCodes(bytes.take(4));
       expect(header, equals('%PDF'));
+    });
+
+    testWidgets('CotizacionPdfPreviewScreen displays soluro_logotipo_sin_fondo.png', (tester) async {
+      final cot = CotizacionModel(
+        numero: 5,
+        titulo: 'Cotización Mantenimiento',
+        articulos: [
+          CotizacionArticuloModel(
+            cotizacionId: 'prev-test',
+            orden: 1,
+            descripcion: 'Mantenimiento Preventivo',
+            precio: 850.0,
+            cantidad: 2.0,
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CotizacionPdfPreviewScreen(cotizacion: cot),
+        ),
+      );
+      await tester.pump();
+
+      // Verify that the new logo image asset is used in preview
+      final imageFinder = find.byWidgetPredicate((widget) {
+        if (widget is Image && widget.image is AssetImage) {
+          final asset = widget.image as AssetImage;
+          return asset.assetName == 'assets/images/soluro_logotipo_sin_fondo.png';
+        }
+        return false;
+      });
+      expect(imageFinder, findsOneWidget);
+      expect(find.text('COTIZACIÓN MANTENIMIENTO'), findsOneWidget);
     });
   });
 

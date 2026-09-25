@@ -229,42 +229,51 @@ class _CotizacionPdfPreviewScreenState extends State<CotizacionPdfPreviewScreen>
                                       MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset(
-                                          'assets/images/soluro_logo_cream.png',
-                                          height: 26,
-                                          errorBuilder: (ctx, err, stack) =>
-                                              const SizedBox(),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: 5,
-                                              height: 14,
-                                              decoration: BoxDecoration(
-                                                color: AppColors.amarilloSol,
-                                                borderRadius:
-                                                    BorderRadius.circular(2),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Image.asset(
+                                            'assets/images/soluro_logotipo_sin_fondo.png',
+                                            height: 28,
+                                            fit: BoxFit.contain,
+                                            alignment: Alignment.centerLeft,
+                                            errorBuilder: (ctx, err, stack) =>
+                                                const SizedBox(),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 5,
+                                                height: 14,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.amarilloSol,
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Text(
-                                              cotizacion.titulo.toUpperCase(),
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w900,
-                                                color: AppColors.azulProfundo,
-                                                letterSpacing: -0.2,
+                                              const SizedBox(width: 6),
+                                              Expanded(
+                                                child: Text(
+                                                  cotizacion.titulo.toUpperCase(),
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w900,
+                                                    color: AppColors.azulProfundo,
+                                                    letterSpacing: -0.2,
+                                                  ),
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
+                                    const SizedBox(width: 12),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
@@ -450,19 +459,22 @@ class _CotizacionPdfPreviewScreenState extends State<CotizacionPdfPreviewScreen>
                                               ),
                                             ),
                                             const SizedBox(height: 2),
-                                            Text(
-                                              cotizacion.totalUnidades
-                                                  .toStringAsFixed(
-                                                      cotizacion.totalUnidades
-                                                                  .truncateToDouble() ==
-                                                              cotizacion
-                                                                  .totalUnidades
-                                                          ? 0
-                                                          : 1),
-                                              style: const TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.w900,
-                                                color: AppColors.azulProfundo,
+                                            FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text(
+                                                cotizacion.totalUnidades
+                                                    .toStringAsFixed(
+                                                        cotizacion.totalUnidades
+                                                                    .truncateToDouble() ==
+                                                                cotizacion
+                                                                    .totalUnidades
+                                                            ? 0
+                                                            : 1),
+                                                style: const TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.w900,
+                                                  color: AppColors.azulProfundo,
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -486,33 +498,36 @@ class _CotizacionPdfPreviewScreenState extends State<CotizacionPdfPreviewScreen>
                                               ),
                                             ),
                                             const SizedBox(height: 2),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.baseline,
-                                              textBaseline:
-                                                  TextBaseline.alphabetic,
-                                              children: [
-                                                const Text(
-                                                  '\$ ',
-                                                  style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color:
-                                                        AppColors.azulProfundo,
+                                            FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.baseline,
+                                                textBaseline:
+                                                    TextBaseline.alphabetic,
+                                                children: [
+                                                  const Text(
+                                                    '\$ ',
+                                                    style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight: FontWeight.bold,
+                                                      color:
+                                                          AppColors.azulProfundo,
+                                                    ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  currencyFmt.format(
-                                                      cotizacion.montoTotal),
-                                                  style: const TextStyle(
-                                                    fontSize: 22,
-                                                    fontWeight: FontWeight.w900,
-                                                    color:
-                                                        AppColors.azulProfundo,
+                                                  Text(
+                                                    currencyFmt.format(
+                                                        cotizacion.montoTotal),
+                                                    style: const TextStyle(
+                                                      fontSize: 22,
+                                                      fontWeight: FontWeight.w900,
+                                                      color:
+                                                          AppColors.azulProfundo,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -751,16 +766,19 @@ class _CotizacionPdfPreviewScreenState extends State<CotizacionPdfPreviewScreen>
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: const [
                         Icon(Icons.check_circle_outline,
                             size: 14, color: AppColors.azulProfundo),
                         SizedBox(width: 4),
-                        Text(
-                          'Documento listo para descargar o compartir',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF64748B),
-                            fontWeight: FontWeight.w500,
+                        Flexible(
+                          child: Text(
+                            'Documento listo para descargar o compartir',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFF64748B),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],

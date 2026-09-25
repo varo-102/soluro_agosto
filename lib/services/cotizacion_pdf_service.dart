@@ -44,13 +44,37 @@ class CotizacionPdfService {
       author: 'Soluro App',
     );
 
-    // Cargar logo de Soluro
+    // Cargar logotipo de Soluro
     pw.MemoryImage? logoImage;
     try {
-      final logoData = await rootBundle.load('assets/images/soluro_logo_cream.png');
-      logoImage = pw.MemoryImage(logoData.buffer.asUint8List());
+      ByteData? logoData;
+      try {
+        logoData = await rootBundle.load('assets/images/soluro_logotipo_sin_fondo.png');
+      } catch (_) {
+        try {
+          logoData = await rootBundle.load('imagenes_soluro/soluro_logotipo_sin_fondo.png');
+        } catch (_) {}
+      }
+
+      if (logoData != null) {
+        logoImage = pw.MemoryImage(logoData.buffer.asUint8List());
+      } else {
+        // Fallback a archivos locales del sistema si está disponible
+        final candidates = [
+          File(r'C:\soluro app\aplicacion_soluro_ago\imagenes_soluro\soluro_logotipo_sin_fondo.png'),
+          File('imagenes_soluro/soluro_logotipo_sin_fondo.png'),
+          File('assets/images/soluro_logotipo_sin_fondo.png'),
+        ];
+        for (final candidate in candidates) {
+          if (await candidate.exists()) {
+            final bytes = await candidate.readAsBytes();
+            logoImage = pw.MemoryImage(bytes);
+            break;
+          }
+        }
+      }
     } catch (e) {
-      // Si falla, el PDF continuará sin el icono
+      // Si falla, el PDF continuará sin el logotipo
     }
 
     // Cargar fotos adjuntas
@@ -153,52 +177,63 @@ class CotizacionPdfService {
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
-                            // Izquierda: Logo y Título
-                            pw.Row(
-                              children: [
-                                if (logoImage != null)
-                                  pw.Container(
-                                    width: 24,
-                                    height: 24,
-                                    margin: const pw.EdgeInsets.only(right: 8),
-                                    child: pw.Image(logoImage),
-                                  ),
-                                pw.Column(
-                                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                  children: [
-                                    pw.Text(
-                                      'Soluro',
-                                      style: pw.TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: pw.FontWeight.bold,
-                                        color: azulProfundo,
+                            // Izquierda: Logotipo e Información del Documento
+                            pw.Expanded(
+                              child: pw.Column(
+                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                children: [
+                                  if (logoImage != null)
+                                    pw.Container(
+                                      height: 28,
+                                      margin: const pw.EdgeInsets.only(bottom: 6),
+                                      alignment: pw.Alignment.centerLeft,
+                                      child: pw.Image(
+                                        logoImage,
+                                        fit: pw.BoxFit.contain,
+                                      ),
+                                    )
+                                  else
+                                    pw.Container(
+                                      margin: const pw.EdgeInsets.only(bottom: 4),
+                                      child: pw.Text(
+                                        'SOLURO',
+                                        style: pw.TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: pw.FontWeight.bold,
+                                          color: azulProfundo,
+                                          letterSpacing: 1.2,
+                                        ),
                                       ),
                                     ),
-                                    pw.Row(
-                                      children: [
-                                        pw.Container(
-                                          width: 4,
-                                          height: 12,
-                                          margin: const pw.EdgeInsets.only(right: 4),
-                                          decoration: pw.BoxDecoration(
-                                            color: amarilloSol,
-                                            borderRadius: pw.BorderRadius.circular(2),
-                                          ),
+                                  pw.Row(
+                                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                                    children: [
+                                      pw.Container(
+                                        width: 4,
+                                        height: 12,
+                                        margin: const pw.EdgeInsets.only(right: 5),
+                                        decoration: pw.BoxDecoration(
+                                          color: amarilloSol,
+                                          borderRadius: pw.BorderRadius.circular(2),
                                         ),
-                                        pw.Text(
+                                      ),
+                                      pw.Expanded(
+                                        child: pw.Text(
                                           cotizacion.titulo.toUpperCase(),
                                           style: pw.TextStyle(
                                             fontSize: 12,
                                             fontWeight: pw.FontWeight.bold,
                                             color: azulProfundo,
                                           ),
+                                          maxLines: 2,
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
+                            pw.SizedBox(width: 12),
 
                             // Derecha: Folio y Fecha
                             pw.Column(
