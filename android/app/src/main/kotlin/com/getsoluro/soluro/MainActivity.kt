@@ -1,4 +1,4 @@
-package com.soluro.soluro
+package com.getsoluro.soluro
 
 import android.content.ClipData
 import android.content.ClipboardManager
