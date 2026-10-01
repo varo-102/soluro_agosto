@@ -31,7 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.8
   sqflite: ^2.3.0
   sqflite_common_ffi: ^2.3.0
   path_provider: ^2.1.1
@@ -86,7 +85,6 @@ flutter:
 
   assets:
     - assets/images/
-    - imagenes_soluro/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

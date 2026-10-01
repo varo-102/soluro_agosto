@@ -47,34 +47,19 @@ class CotizacionPdfService {
     // Cargar logotipo de Soluro
     pw.MemoryImage? logoImage;
     try {
-      ByteData? logoData;
+      final logoData = await rootBundle.load('assets/images/soluro_logotipo_sin_fondo.png');
+      logoImage = pw.MemoryImage(logoData.buffer.asUint8List());
+    } catch (_) {
+      // Fallback para pruebas unitarias de escritorio sin rootBundle completo
       try {
-        logoData = await rootBundle.load('assets/images/soluro_logotipo_sin_fondo.png');
-      } catch (_) {
-        try {
-          logoData = await rootBundle.load('imagenes_soluro/soluro_logotipo_sin_fondo.png');
-        } catch (_) {}
-      }
-
-      if (logoData != null) {
-        logoImage = pw.MemoryImage(logoData.buffer.asUint8List());
-      } else {
-        // Fallback a archivos locales del sistema si está disponible
-        final candidates = [
-          File(r'C:\soluro app\aplicacion_soluro_ago\imagenes_soluro\soluro_logotipo_sin_fondo.png'),
-          File('imagenes_soluro/soluro_logotipo_sin_fondo.png'),
-          File('assets/images/soluro_logotipo_sin_fondo.png'),
-        ];
-        for (final candidate in candidates) {
-          if (await candidate.exists()) {
-            final bytes = await candidate.readAsBytes();
-            logoImage = pw.MemoryImage(bytes);
-            break;
-          }
+        final localAsset = File('assets/images/soluro_logotipo_sin_fondo.png');
+        if (await localAsset.exists()) {
+          final bytes = await localAsset.readAsBytes();
+          logoImage = pw.MemoryImage(bytes);
         }
+      } catch (_) {
+        // Si no está disponible, el PDF se genera limpiamente sin logotipo
       }
-    } catch (e) {
-      // Si falla, el PDF continuará sin el logotipo
     }
 
     // Cargar fotos adjuntas
