@@ -8,6 +8,7 @@ import '../../repositories/data_repository.dart';
 import '../../repositories/repository_provider.dart';
 import '../../services/image_compression_service.dart';
 import '../../theme/app_colors.dart';
+import '../backup/backup_restore_screen.dart';
 import 'cotizacion_history_screen.dart';
 import 'cotizacion_pdf_preview_screen.dart';
 import '../main_screen.dart';
@@ -658,6 +659,26 @@ class CotizacionScreenState extends State<CotizacionScreen> {
               'Historial',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
+          ),
+          // Botón Copia de Seguridad
+          IconButton(
+            icon: Icon(
+              Icons.cloud_sync_outlined,
+              color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+            ),
+            tooltip: 'Copias de Seguridad',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BackupRestoreScreen(
+                    onDataRestored: () {
+                      resetToNew();
+                    },
+                  ),
+                ),
+              );
+            },
           ),
           // Botón de modo oscuro en la esquina superior derecha (misma posición que QR y Mis Direcciones)
           IconButton(

@@ -18,10 +18,68 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   Future<Database> get database async {
-    if (_database != null) return _database!;
+    if (_database != null && _database!.isOpen) return _database!;
     _initDbFuture ??= _initDatabase();
     _database = await _initDbFuture;
     return _database!;
+  }
+
+  /// Retorna la ruta absoluta al archivo SQLite de la base de datos
+  Future<String> getDatabaseFilePath() async {
+    final dbPath = await getDatabasesPath();
+    return join(dbPath, 'soluro_database.db');
+  }
+
+  /// Ejecuta un checkpoint completo de WAL para consolidar todas las transacciones
+  /// del archivo .db-wal en el archivo principal .db antes de respaldar.
+  Future<void> checkpointWal() async {
+    try {
+      final db = await database;
+      await db.rawQuery('PRAGMA wal_checkpoint(FULL)');
+    } catch (e) {
+      debugPrint('Aviso checkpoint WAL: $e');
+    }
+  }
+
+  /// Cierra de forma segura la conexión SQLite activa para liberar bloqueos de archivo
+  Future<void> closeDatabase() async {
+    if (_database != null) {
+      try {
+        if (_database!.isOpen) {
+          await _database!.close();
+        }
+      } catch (e) {
+        debugPrint('Error cerrando BD: $e');
+      } finally {
+        _database = null;
+        _initDbFuture = null;
+      }
+    }
+  }
+
+  /// Reabre la base de datos tras una restauración
+  Future<Database> reopenDatabase() async {
+    await closeDatabase();
+    return await database;
+  }
+
+  /// Obtiene estadísticas de registros actuales para metadatos de respaldo
+  Future<Map<String, int>> getDatabaseStats() async {
+    try {
+      final db = await database;
+      final qrResult = await db.rawQuery('SELECT COUNT(*) as c FROM qr_codes WHERE is_deleted = 0');
+      final dirResult = await db.rawQuery('SELECT COUNT(*) as c FROM direcciones WHERE is_deleted = 0');
+      final cotResult = await db.rawQuery('SELECT COUNT(*) as c FROM cotizaciones WHERE is_deleted = 0');
+
+      return {
+        'qr_codes': (qrResult.first['c'] as num?)?.toInt() ?? 0,
+        'direcciones': (dirResult.first['c'] as num?)?.toInt() ?? 0,
+        'cotizaciones': (cotResult.first['c'] as num?)?.toInt() ?? 0,
+      };
+    } catch (e) {
+      debugPrint('Error obteniendo estadísticas de BD: $e');
+      return {'qr_codes': 0, 'direcciones': 0, 'cotizaciones': 0};
+    }
   }
 
   Future<Database> _initDatabase() async {

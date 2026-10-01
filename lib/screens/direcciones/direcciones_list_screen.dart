@@ -13,10 +13,10 @@ class DireccionesListScreen extends StatefulWidget {
   const DireccionesListScreen({super.key, this.repository});
 
   @override
-  State<DireccionesListScreen> createState() => _DireccionesListScreenState();
+  State<DireccionesListScreen> createState() => DireccionesListScreenState();
 }
 
-class _DireccionesListScreenState extends State<DireccionesListScreen> {
+class DireccionesListScreenState extends State<DireccionesListScreen> {
   DataRepository get _repository => widget.repository ?? RepositoryProvider.instance;
   List<DireccionModel> _direccionesList = [];
   bool _isLoading = true;

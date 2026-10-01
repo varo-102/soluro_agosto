@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Incluir base de datos SQLite y archivos de transacción WAL -->
+        <include domain="database" path="soluro_database.db" />
+        <include domain="database" path="soluro_database.db-wal" />
+        <include domain="database" path="soluro_database.db-shm" />
+
+        <!-- Incluir archivos persistentes de la app (imágenes QR y fotos de cotizaciones) -->
+        <include domain="file" path="app_flutter/qr_images" />
+        <include domain="file" path="app_flutter/cotizaciones_fotos" />
+
+        <!-- Incluir preferencias del usuario -->
+        <include domain="sharedpref" path="." />
+
+        <!-- Exclusiones de seguridad para evitar errores de descifrado con Android Keystore -->
+        <exclude domain="sharedpref" path="FlutterSecureStorage.xml" />
+    </cloud-backup>
+
+    <device-transfer>
+        <!-- Migración directa dispositivo a dispositivo -->
+        <include domain="database" path="soluro_database.db" />
+        <include domain="database" path="soluro_database.db-wal" />
+        <include domain="database" path="soluro_database.db-shm" />
+        <include domain="file" path="app_flutter/qr_images" />
+        <include domain="file" path="app_flutter/cotizaciones_fotos" />
+        <include domain="sharedpref" path="." />
+        <exclude domain="sharedpref" path="FlutterSecureStorage.xml" />
+    </device-transfer>
+</data-extraction-rules>

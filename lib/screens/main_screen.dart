@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../services/backup_service.dart';
 import '../theme/app_colors.dart';
+import 'backup/backup_restore_screen.dart';
 import 'qr/qr_list_screen.dart';
 import 'direcciones/direcciones_list_screen.dart';
 import 'cotizaciones/cotizacion_screen.dart';
@@ -23,6 +25,75 @@ class _MainScreenState extends State<MainScreen> {
       GlobalKey<QRListScreenState>();
   final GlobalKey<CotizacionScreenState> _cotizacionKey =
       GlobalKey<CotizacionScreenState>();
+  final GlobalKey<DireccionesListScreenState> _direccionesKey =
+      GlobalKey<DireccionesListScreenState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Comprobar e iniciar restauración silenciosa si existe un respaldo previo
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _silentAutoRestoreIfNeeded();
+    });
+  }
+
+  Future<void> _silentAutoRestoreIfNeeded() async {
+    try {
+      final check = await BackupService().checkFirstLaunchAndLookForBackups();
+      if (!check.isFirstLaunch) return;
+
+      if (check.hasDetectedBackups) {
+        final latestBackup = check.detectedBackups.first;
+        await BackupService().restoreBackup(latestBackup);
+
+        if (!mounted) return;
+        _reloadAllData();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColors.azulProfundo,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 4),
+            content: const Row(
+              children: [
+                Icon(Icons.cloud_done, color: AppColors.amarilloSol, size: 20),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Se restauró automáticamente tu información previa de Soluro.',
+                    style: TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      } else {
+        // No hay respaldos detectados: inicio limpio sin interrupción
+        await BackupService().markFirstLaunchCompleted();
+      }
+    } catch (e) {
+      debugPrint('Aviso en restauración automática: $e');
+      await BackupService().markFirstLaunchCompleted();
+    }
+  }
+
+  void _reloadAllData() {
+    _qrListKey.currentState?.loadQRCodes();
+    _direccionesKey.currentState?.loadDirecciones();
+    _cotizacionKey.currentState?.resetToNew();
+  }
+
+  void _openBackupScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BackupRestoreScreen(
+          onDataRestored: () => _reloadAllData(),
+        ),
+      ),
+    );
+  }
 
   void _onTabTapped(int index) {
     _loadedTabs.add(index);
@@ -58,7 +129,7 @@ class _MainScreenState extends State<MainScreen> {
             )
           : const SizedBox.shrink(),
       _loadedTabs.contains(2)
-          ? const DireccionesListScreen()
+          ? DireccionesListScreen(key: _direccionesKey)
           : const SizedBox.shrink(),
     ];
 
@@ -103,6 +174,15 @@ class _MainScreenState extends State<MainScreen> {
                 ],
               ),
               actions: [
+                // Backup & Restore
+                IconButton(
+                  icon: Icon(
+                    Icons.cloud_sync_outlined,
+                    color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                  ),
+                  tooltip: 'Copias de Seguridad',
+                  onPressed: _openBackupScreen,
+                ),
                 // Theme Toggle
                 IconButton(
                   icon: Icon(
