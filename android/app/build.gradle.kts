@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.soluro.soluro"
+    namespace = "com.getsoluro.soluro"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 

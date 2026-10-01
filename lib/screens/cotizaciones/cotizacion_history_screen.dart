@@ -1035,18 +1035,22 @@ class _CotizacionHistoryScreenState extends State<CotizacionHistoryScreen> {
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          const Icon(
+                                          Icon(
                                             Icons.photo_library_outlined,
                                             size: 13,
-                                            color: AppColors.azulProfundo,
+                                            color: isDark
+                                                ? const Color(0xFF90CAF9)
+                                                : AppColors.azulProfundo,
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
                                             '${cot.fotos.length} fotos adjuntas',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
-                                              color: AppColors.azulProfundo,
+                                              color: isDark
+                                                  ? const Color(0xFF90CAF9)
+                                                  : AppColors.azulProfundo,
                                             ),
                                           ),
                                         ],
@@ -1150,8 +1154,9 @@ class _CotizacionHistoryScreenState extends State<CotizacionHistoryScreen> {
                                             onPressed: () =>
                                                 _deleteCotizacion(cot),
                                             style: OutlinedButton.styleFrom(
-                                              foregroundColor:
-                                                  AppColors.statusRedText,
+                                              foregroundColor: isDark
+                                                  ? const Color(0xFFFF6B6B)
+                                                  : AppColors.statusRedText,
                                               side: BorderSide(
                                                 color: Colors.grey.shade300,
                                               ),
@@ -1161,10 +1166,12 @@ class _CotizacionHistoryScreenState extends State<CotizacionHistoryScreen> {
                                                     BorderRadius.circular(8),
                                               ),
                                             ),
-                                            child: const Icon(
+                                            child: Icon(
                                               Icons.delete_outline,
                                               size: 18,
-                                              color: AppColors.statusRedText,
+                                              color: isDark
+                                                  ? const Color(0xFFFF6B6B)
+                                                  : AppColors.statusRedText,
                                             ),
                                           ),
                                         ),
