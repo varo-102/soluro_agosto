@@ -109,7 +109,7 @@ class DatabaseHelper {
     await db.insert('qr_codes', {
       'id': const Uuid().v4(),
       'user_id': null,
-      'banco': 'Banco BISA',
+      'banco': 'Banco',
       'referencia': 'Cobro Servicios #10293',
       'fecha_expiracion': now.add(const Duration(days: 10)).toIso8601String(),
       'ruta_imagen': '',
