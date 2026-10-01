@@ -69,6 +69,7 @@ flutter_launcher_icons:
   image_path: "assets/images/app_launcher_icon_solid.png"
   adaptive_icon_background: "#FAF8F2"
   adaptive_icon_foreground: "imagenes_soluro/isotipo transparente TRANSPARENTE ESTE SI.png"
+  adaptive_icon_foreground_inset: 23
   adaptive_icon_monochrome: "assets/images/soluro_isotipo_monochrome.png"
 
 # For information on the generic Dart part of this file, see the
