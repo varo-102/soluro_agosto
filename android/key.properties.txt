@@ -1,0 +1,4 @@
+storePassword=Casio.Acutani.+24*58
+keyPassword=Casio.Acutani.+24*58
+keyAlias=soluro-key
+storeFile=C:\soluro_app\aplicacion_soluro_ago\soluro_release.jks

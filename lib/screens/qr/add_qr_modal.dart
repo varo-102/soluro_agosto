@@ -194,26 +194,36 @@ class _AddQRModalState extends State<AddQRModal> {
     final dateFormat = DateFormat('dd/MM/yyyy');
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isEditing = widget.qrToEdit != null;
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
       backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: isKeyboardOpen ? 12 : 24,
+      ),
       clipBehavior: Clip.antiAlias,
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.85,
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            isKeyboardOpen ? 12 : 20,
+            20,
+            isKeyboardOpen ? 12 : 20,
+          ),
           child: Form(
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Header (Título y botón cerrar)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -230,152 +240,190 @@ class _AddQRModalState extends State<AddQRModal> {
                         Icons.close,
                         color: isDark ? Colors.white : AppColors.azulProfundo,
                       ),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                // Image Selector Container
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: Container(
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.cardDark : AppColors.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: _selectedImage == null
-                            ? (isDark ? const Color(0xFF43474D) : Colors.grey.shade300)
-                            : AppColors.amarilloSol,
-                        width: 2,
-                      ),
-                    ),
-                    child: _selectedImage != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(14),
-                            child: Image.file(
-                              _selectedImage!,
-                              fit: BoxFit.contain,
-                            ),
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_photo_alternate_rounded,
-                                size: 48,
-                                color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Seleccionar imagen de QR',
-                                style: TextStyle(
-                                  color: isDark ? Colors.white : AppColors.azulProfundo,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const Text(
-                                'Galería o gestor de archivos',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 16),
+                SizedBox(height: isKeyboardOpen ? 10 : 16),
 
-                // Banco / Institución
-                TextFormField(
-                  controller: _bancoController,
-                  decoration: const InputDecoration(
-                    labelText: 'Banco / Institución',
-                    hintText: 'Ej. Banco BISA, BNB, Mercantil...',
-                    prefixIcon: Icon(Icons.account_balance),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Ingresa el nombre del banco o institución';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-
-                // Referencia
-                TextFormField(
-                  controller: _referenciaController,
-                  decoration: const InputDecoration(
-                    labelText: 'Referencia / Descripción',
-                    hintText: 'Ej. Nº de cuenta, Cobro de servicios...',
-                    prefixIcon: Icon(Icons.description),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Ingresa una referencia o descripción';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-
-                // Expiration Date Selector
-                InkWell(
-                  onTap: _selectDate,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: isDark ? const Color(0xFF43474D) : Colors.grey.shade300,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // Contenido desplazable intermedio
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.event,
-                              color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                        // Contenedor de la imagen del QR (se adapta si el teclado está desplegado)
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            height: isKeyboardOpen ? 75 : 160,
+                            decoration: BoxDecoration(
+                              color: isDark ? AppColors.cardDark : AppColors.surfaceContainerLow,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: _selectedImage == null
+                                    ? (isDark ? const Color(0xFF43474D) : Colors.grey.shade300)
+                                    : AppColors.amarilloSol,
+                                width: 2,
+                              ),
                             ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: _selectedImage != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(14),
+                                    child: Image.file(
+                                      _selectedImage!,
+                                      fit: isKeyboardOpen ? BoxFit.cover : BoxFit.contain,
+                                      width: double.infinity,
+                                    ),
+                                  )
+                                : (isKeyboardOpen
+                                    ? Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.add_photo_alternate_rounded,
+                                            size: 28,
+                                            color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Seleccionar imagen de QR',
+                                            style: TextStyle(
+                                              color: isDark ? Colors.white : AppColors.azulProfundo,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.add_photo_alternate_rounded,
+                                            size: 48,
+                                            color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Seleccionar imagen de QR',
+                                            style: TextStyle(
+                                              color: isDark ? Colors.white : AppColors.azulProfundo,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const Text(
+                                            'Galería o gestor de archivos',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                          ),
+                        ),
+                        SizedBox(height: isKeyboardOpen ? 10 : 16),
+
+                        // Banco / Institución
+                        TextFormField(
+                          controller: _bancoController,
+                          decoration: const InputDecoration(
+                            labelText: 'Banco / Institución',
+                            hintText: 'Ej. Banco BISA, BNB, Mercantil...',
+                            prefixIcon: Icon(Icons.account_balance),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Ingresa el nombre del banco o institución';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: isKeyboardOpen ? 8 : 12),
+
+                        // Referencia
+                        TextFormField(
+                          controller: _referenciaController,
+                          decoration: const InputDecoration(
+                            labelText: 'Referencia / Descripción',
+                            hintText: 'Ej. Nº de cuenta, Cobro de servicios...',
+                            prefixIcon: Icon(Icons.description),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Ingresa una referencia o descripción';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: isKeyboardOpen ? 8 : 12),
+
+                        // Selector de Fecha de Expiración
+                        InkWell(
+                          onTap: _selectDate,
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: isDark ? const Color(0xFF43474D) : Colors.grey.shade300,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'Fecha de Expiración',
-                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.event,
+                                      color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Fecha de Expiración',
+                                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                                        ),
+                                        Text(
+                                          dateFormat.format(_expirationDate),
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  dateFormat.format(_expirationDate),
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: isDark ? Colors.white : AppColors.textPrimaryLight,
-                                  ),
-                                ),
+                                const Icon(Icons.arrow_drop_down),
                               ],
                             ),
-                          ],
+                          ),
                         ),
-                        const Icon(Icons.arrow_drop_down),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
 
-                // Save Button
+                SizedBox(height: isKeyboardOpen ? 10 : 16),
+
+                // Botón Guardar / Actualizar - Siempre fijo en la parte inferior sobre el teclado
                 ElevatedButton.icon(
                   onPressed: _isSaving ? null : _saveQR,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.amarilloSol,
                     foregroundColor: AppColors.azulProfundo,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: EdgeInsets.symmetric(
+                      vertical: isKeyboardOpen ? 12 : 16,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
