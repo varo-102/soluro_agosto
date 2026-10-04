@@ -13,6 +13,7 @@ class ImageCompressionService {
       ImageCompressionService._internal();
 
   final ImagePicker _picker = ImagePicker();
+  static int _fileCounter = 0;
 
   factory ImageCompressionService() => _instance;
 
@@ -43,6 +44,34 @@ class ImageCompressionService {
     }
   }
 
+  /// Permite al usuario seleccionar múltiples fotografías desde la galería simultáneamente,
+  /// comprime cada imagen según los requerimientos estrictos y las guarda localmente.
+  Future<List<String>> pickMultiAndCompressImages({int maxImages = 6}) async {
+    try {
+      final List<XFile> pickedFiles = await _picker.pickMultiImage(
+        maxWidth: 2400,
+        maxHeight: 2400,
+      );
+
+      if (pickedFiles.isEmpty) return [];
+
+      final filesToProcess = pickedFiles.take(maxImages).toList();
+      final List<String> compressedPaths = [];
+
+      for (int i = 0; i < filesToProcess.length; i++) {
+        final path = await compressAndSaveImage(filesToProcess[i].path);
+        if (path != null) {
+          compressedPaths.add(path);
+        }
+      }
+
+      return compressedPaths;
+    } catch (e) {
+      debugPrint('Error en pickMultiAndCompressImages: $e');
+      return [];
+    }
+  }
+
   /// Comprime una imagen existente en [sourcePath] aplicando los parámetros:
   /// - Lado más largo a 800px.
   /// - JPEG sin transparencia.
@@ -55,7 +84,7 @@ class ImageCompressionService {
         await photosDir.create(recursive: true);
       }
 
-      final fileName = 'foto_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final fileName = 'foto_${DateTime.now().microsecondsSinceEpoch}_${_fileCounter++}.jpg';
       final targetPath = p.join(photosDir.path, fileName);
 
       // Intentar primero con flutter_image_compress (enfoque principal móvil)

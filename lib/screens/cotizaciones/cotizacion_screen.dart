@@ -528,20 +528,123 @@ class CotizacionScreenState extends State<CotizacionScreen> {
       ),
     );
 
-    if (source != null) {
+    if (source == ImageSource.camera) {
+      await _capturePhotosFromCamera();
+    } else if (source == ImageSource.gallery) {
+      await _pickPhotosFromGallery();
+    }
+  }
+
+  /// Permite capturar hasta 6 fotos de forma consecutiva con la cámara
+  Future<void> _capturePhotosFromCamera() async {
+    int newlyAdded = 0;
+
+    while (_currentCotizacion.fotos.length < 6) {
       final compressedPath =
-          await _imageService.pickAndCompressImage(source);
-      if (compressedPath != null) {
-        final updatedFotos = List<String>.from(_currentCotizacion.fotos)
-          ..add(compressedPath);
-        setState(() {
-          _currentCotizacion = _currentCotizacion.copyWith(
-            fotos: updatedFotos,
-            updatedAt: DateTime.now(),
-          );
-        });
-        await _saveCurrentCotizacion(showReassurance: true);
+          await _imageService.pickAndCompressImage(ImageSource.camera);
+      if (compressedPath == null) {
+        // El usuario canceló la cámara (presionó Atrás sin tomar foto)
+        break;
       }
+
+      final updatedFotos = List<String>.from(_currentCotizacion.fotos)
+        ..add(compressedPath);
+      setState(() {
+        _currentCotizacion = _currentCotizacion.copyWith(
+          fotos: updatedFotos,
+          updatedAt: DateTime.now(),
+        );
+      });
+      await _saveCurrentCotizacion(showReassurance: false);
+      newlyAdded++;
+
+      if (_currentCotizacion.fotos.length >= 6) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Límite de 6 fotografías alcanzado.'),
+              backgroundColor: AppColors.azulProfundo,
+            ),
+          );
+        }
+        break;
+      }
+
+      if (!mounted) break;
+      final bool? continueTaking = await showDialog<bool>(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) => AlertDialog(
+          title: Row(
+            children: [
+              const Icon(Icons.camera_alt, color: AppColors.amarilloSol),
+              const SizedBox(width: 8),
+              Text('Foto agregada (${_currentCotizacion.fotos.length}/6)'),
+            ],
+          ),
+          content: Text(
+            'Has capturado ${_currentCotizacion.fotos.length} de 6 fotos permitidas.\n¿Deseas tomar otra foto ahora?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Finalizar'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pop(context, true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.amarilloSol,
+                foregroundColor: AppColors.azulProfundo,
+              ),
+              icon: const Icon(Icons.camera_alt, size: 18),
+              label: const Text('Tomar otra foto'),
+            ),
+          ],
+        ),
+      );
+
+      if (continueTaking != true) {
+        break;
+      }
+    }
+
+    if (newlyAdded > 0 && mounted) {
+      _saveCurrentCotizacion(showReassurance: true);
+    }
+  }
+
+  /// Permite seleccionar simultáneamente múltiples fotos desde la galería hasta completar 6
+  Future<void> _pickPhotosFromGallery() async {
+    final availableSlots = 6 - _currentCotizacion.fotos.length;
+    if (availableSlots <= 0) return;
+
+    final compressedPaths =
+        await _imageService.pickMultiAndCompressImages(maxImages: availableSlots);
+    if (compressedPaths.isEmpty) return;
+
+    final updatedFotos = List<String>.from(_currentCotizacion.fotos)
+      ..addAll(compressedPaths);
+    setState(() {
+      _currentCotizacion = _currentCotizacion.copyWith(
+        fotos: updatedFotos,
+        updatedAt: DateTime.now(),
+      );
+    });
+
+    await _saveCurrentCotizacion(showReassurance: true);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            compressedPaths.length == 1
+                ? 'Fotografía agregada correctamente'
+                : '${compressedPaths.length} fotografías agregadas correctamente',
+          ),
+          backgroundColor: AppColors.azulProfundo,
+          duration: const Duration(seconds: 2),
+        ),
+      );
     }
   }
 

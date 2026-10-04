@@ -94,6 +94,13 @@ class DatabaseHelper {
     return await openDatabase(
       path,
       version: 4,
+      onConfigure: (db) async {
+        if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
+          try {
+            await db.rawQuery('PRAGMA busy_timeout = 5000');
+          } catch (_) {}
+        }
+      },
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );

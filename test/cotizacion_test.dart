@@ -241,6 +241,16 @@ void main() {
       );
       expect(cotValida.tieneArticuloValidoParaGuardado, isTrue);
     });
+
+    test('CotizacionModel supports up to 6 photos correctly', () {
+      final cot = CotizacionModel.createEmpty(numero: 1);
+      final sixPhotos = List.generate(6, (i) => '/path/to/photo_$i.jpg');
+      final updated = cot.copyWith(fotos: sixPhotos);
+
+      expect(updated.fotos.length, equals(6));
+      expect(updated.fotos.first, equals('/path/to/photo_0.jpg'));
+      expect(updated.fotos.last, equals('/path/to/photo_5.jpg'));
+    });
   });
 
   group('Repository & Persistence Tests for Cotizaciones', () {
