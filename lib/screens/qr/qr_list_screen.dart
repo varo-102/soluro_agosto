@@ -268,7 +268,7 @@ class QRListScreenState extends State<QRListScreen> {
                                   size: 36,
                                 ),
                         ),
-                        const SizedBox(width: 14),
+                        const SizedBox(width: 10),
 
                         // Bank Title & Reference
                         Expanded(
@@ -299,7 +299,7 @@ class QRListScreenState extends State<QRListScreen> {
 
                               // Expiration Badge
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: qr.statusBackgroundColor,
                                   borderRadius: BorderRadius.circular(12),
@@ -313,12 +313,16 @@ class QRListScreenState extends State<QRListScreen> {
                                       color: qr.statusTextColor,
                                     ),
                                     const SizedBox(width: 4),
-                                    Text(
-                                      qr.statusText,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: qr.statusTextColor,
+                                    Flexible(
+                                      child: Text(
+                                        qr.statusText,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: qr.statusTextColor,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ],
@@ -327,19 +331,26 @@ class QRListScreenState extends State<QRListScreen> {
                             ],
                           ),
                         ),
+                        const SizedBox(width: 8),
 
                         // Edit & Delete Actions + Drag Handle
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.edit_outlined, size: 22),
+                              icon: const Icon(Icons.edit_outlined, size: 20),
+                              visualDensity: VisualDensity.compact,
+                              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                              padding: const EdgeInsets.all(6),
                               color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
                               tooltip: 'Editar QR',
                               onPressed: () => _showEditModal(qr),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete_outline, size: 22),
+                              icon: const Icon(Icons.delete_outline, size: 20),
+                              visualDensity: VisualDensity.compact,
+                              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                              padding: const EdgeInsets.all(6),
                               color: Colors.grey.shade600,
                               tooltip: 'Eliminar QR',
                               onPressed: () => _deleteQR(qr.id),
