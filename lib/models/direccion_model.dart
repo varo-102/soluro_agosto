@@ -13,6 +13,7 @@ class DireccionModel {
   final SyncStatus syncStatus;
   final DateTime? lastSyncedAt;
   final bool isDeleted;
+  final int orden;
 
   DireccionModel({
     String? id,
@@ -26,6 +27,7 @@ class DireccionModel {
     this.syncStatus = SyncStatus.pending,
     this.lastSyncedAt,
     this.isDeleted = false,
+    this.orden = 0,
   })  : id = id ?? const Uuid().v4(),
         createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
@@ -42,6 +44,7 @@ class DireccionModel {
     SyncStatus? syncStatus,
     DateTime? lastSyncedAt,
     bool? isDeleted,
+    int? orden,
   }) {
     return DireccionModel(
       id: id ?? this.id,
@@ -55,6 +58,7 @@ class DireccionModel {
       syncStatus: syncStatus ?? this.syncStatus,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
       isDeleted: isDeleted ?? this.isDeleted,
+      orden: orden ?? this.orden,
     );
   }
 
@@ -72,6 +76,7 @@ class DireccionModel {
       'sync_status': syncStatus.toValue(),
       'last_synced_at': lastSyncedAt?.toIso8601String(),
       'is_deleted': isDeleted ? 1 : 0,
+      'orden': orden,
     };
   }
 
@@ -101,6 +106,7 @@ class DireccionModel {
           : null,
       isDeleted: (json['is_deleted'] ?? json['isDeleted']) == 1 ||
           (json['is_deleted'] ?? json['isDeleted']) == true,
+      orden: (json['orden'] as num?)?.toInt() ?? 0,
     );
   }
 

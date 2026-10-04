@@ -105,6 +105,20 @@ class QRListScreenState extends State<QRListScreen> {
     );
   }
 
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final item = _qrList.removeAt(oldIndex);
+      _qrList.insert(newIndex, item);
+    });
+
+    final orderedIds = _qrList.map((q) => q.id).toList();
+    _repository.updateQRCodesOrder(orderedIds);
+    QuickActionsService().updateQuickActions(_qrList);
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -115,248 +129,278 @@ class QRListScreenState extends State<QRListScreen> {
       );
     }
 
+    if (_qrList.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: loadQRCodes,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.7,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.qr_code_scanner_rounded,
+                    size: 72,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'No tienes códigos QR guardados',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondaryLight,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Presiona "+ Añadir QR" para registrar tu primer cobro.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _showAddModal,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.amarilloSol,
+                      foregroundColor: AppColors.azulProfundo,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Añadir QR'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return RefreshIndicator(
       onRefresh: loadQRCodes,
-      child: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.all(16.0),
-            sliver: _qrList.isEmpty
-                ? SliverFillRemaining(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.qr_code_scanner_rounded,
-                            size: 72,
-                            color: Colors.grey.shade400,
+      child: ReorderableListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: _qrList.length,
+        // ignore: deprecated_member_use
+        onReorder: _onReorder,
+        proxyDecorator: (Widget child, int index, Animation<double> animation) {
+          return AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget? child) {
+              return Material(
+                elevation: 6,
+                color: Colors.transparent,
+                shadowColor: Colors.black26,
+                borderRadius: BorderRadius.circular(16),
+                child: child,
+              );
+            },
+            child: child,
+          );
+        },
+        footer: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: ElevatedButton.icon(
+            onPressed: _showAddModal,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.amarilloSol,
+              foregroundColor: AppColors.azulProfundo,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              elevation: 1,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            icon: const Icon(Icons.add, size: 24),
+            label: const Text(
+              'Añadir QR',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        itemBuilder: (context, index) {
+          final qr = _qrList[index];
+          final imageFile = File(qr.rutaImagen);
+          final hasImage = qr.rutaImagen.isNotEmpty && imageFile.existsSync();
+
+          return Card(
+            key: ValueKey(qr.id),
+            margin: const EdgeInsets.only(bottom: 12.0),
+            child: InkWell(
+              onTap: () => openQRDetail(qr),
+              borderRadius: BorderRadius.circular(16),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Left Thumbnail
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade200),
                           ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'No tienes códigos QR guardados',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textSecondaryLight,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Presiona "+ Añadir QR" para registrar tu primer cobro.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton.icon(
-                            onPressed: _showAddModal,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.amarilloSol,
-                              foregroundColor: AppColors.azulProfundo,
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                            ),
-                            icon: const Icon(Icons.add),
-                            label: const Text('Añadir QR'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (index == _qrList.length) {
-                          // Bottom "+ Añadir QR" button matching Stitch specs
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            child: ElevatedButton.icon(
-                              onPressed: _showAddModal,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.amarilloSol,
-                                foregroundColor: AppColors.azulProfundo,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                elevation: 1,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                          padding: const EdgeInsets.all(4),
+                          child: hasImage
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    imageFile,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.qr_code_2,
+                                  color: AppColors.azulProfundo,
+                                  size: 36,
                                 ),
-                              ),
-                              icon: const Icon(Icons.add, size: 24),
-                              label: const Text(
-                                'Añadir QR',
+                        ),
+                        const SizedBox(width: 14),
+
+                        // Bank Title & Reference
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                qr.banco,
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
+                                  color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                qr.referencia,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 6),
+
+                              // Expiration Badge
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: qr.statusBackgroundColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      qr.daysRemaining < 3 ? Icons.warning : Icons.schedule,
+                                      size: 14,
+                                      color: qr.statusTextColor,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      qr.statusText,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: qr.statusTextColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Edit & Delete Actions + Drag Handle
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined, size: 22),
+                              color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                              tooltip: 'Editar QR',
+                              onPressed: () => _showEditModal(qr),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline, size: 22),
+                              color: Colors.grey.shade600,
+                              tooltip: 'Eliminar QR',
+                              onPressed: () => _deleteQR(qr.id),
+                            ),
+                            ReorderableDragStartListener(
+                              index: index,
+                              child: Tooltip(
+                                message: 'Arrastrar para reordenar',
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                  child: Icon(
+                                    Icons.drag_indicator_rounded,
+                                    size: 22,
+                                    color: Colors.grey.shade400,
+                                  ),
                                 ),
                               ),
                             ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+
+                    // [Copiar QR] Button
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (hasImage) {
+                          final copied = await ClipboardService.copyImageToClipboard(qr.rutaImagen);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  copied
+                                      ? '¡QR de ${qr.banco} copiado al portapapeles!'
+                                      : 'Se abrieron las opciones para compartir el QR',
+                                ),
+                                backgroundColor: AppColors.azulProfundo,
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('No existe archivo de imagen para este QR')),
                           );
                         }
-
-                        final qr = _qrList[index];
-                        final imageFile = File(qr.rutaImagen);
-                        final hasImage = qr.rutaImagen.isNotEmpty && imageFile.existsSync();
-
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 12.0),
-                          child: InkWell(
-                            onTap: () => openQRDetail(qr),
-                            borderRadius: BorderRadius.circular(16),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Left Thumbnail
-                                      Container(
-                                        width: 56,
-                                        height: 56,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(12),
-                                          border: Border.all(color: Colors.grey.shade200),
-                                        ),
-                                        padding: const EdgeInsets.all(4),
-                                        child: hasImage
-                                            ? ClipRRect(
-                                                borderRadius: BorderRadius.circular(8),
-                                                child: Image.file(
-                                                  imageFile,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              )
-                                            : const Icon(
-                                                Icons.qr_code_2,
-                                                color: AppColors.azulProfundo,
-                                                size: 36,
-                                              ),
-                                      ),
-                                      const SizedBox(width: 14),
-
-                                      // Bank Title & Reference
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              qr.banco,
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              qr.referencia,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(height: 6),
-
-                                            // Expiration Badge
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                              decoration: BoxDecoration(
-                                                color: qr.statusBackgroundColor,
-                                                borderRadius: BorderRadius.circular(12),
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(
-                                                    qr.daysRemaining < 3 ? Icons.warning : Icons.schedule,
-                                                    size: 14,
-                                                    color: qr.statusTextColor,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Text(
-                                                    qr.statusText,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.w600,
-                                                      color: qr.statusTextColor,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                      // Edit & Delete Actions
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.edit_outlined, size: 22),
-                                            color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                                            tooltip: 'Editar QR',
-                                            onPressed: () => _showEditModal(qr),
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete_outline, size: 22),
-                                            color: Colors.grey.shade600,
-                                            tooltip: 'Eliminar QR',
-                                            onPressed: () => _deleteQR(qr.id),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 14),
-
-                                  // [Copiar QR] Button
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      if (hasImage) {
-                                        final copied = await ClipboardService.copyImageToClipboard(qr.rutaImagen);
-                                        if (context.mounted) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                copied
-                                                    ? '¡QR de ${qr.banco} copiado al portapapeles!'
-                                                    : 'Se abrieron las opciones para compartir el QR',
-                                              ),
-                                              backgroundColor: AppColors.azulProfundo,
-                                              duration: const Duration(seconds: 2),
-                                            ),
-                                          );
-                                        }
-                                      } else {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('No existe archivo de imagen para este QR')),
-                                        );
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                                      foregroundColor: isDark ? AppColors.azulProfundo : Colors.white,
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
-                                    ),
-                                    child: const Text('Copiar QR'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
                       },
-                      childCount: _qrList.length + 1,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                        foregroundColor: isDark ? AppColors.azulProfundo : Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Text('Copiar QR'),
                     ),
-                  ),
-          ),
-        ],
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -19,6 +19,9 @@ abstract class DataRepository {
   /// Realiza un borrado lógico (Soft Delete) del código QR.
   Future<void> deleteQRCode(String id);
 
+  /// Actualiza el orden secuencial de los códigos QR.
+  Future<void> updateQRCodesOrder(List<String> orderedIds);
+
   // --- DIRECCIONES ---
 
   /// Obtiene todas las direcciones. Por defecto filtra las marcadas como eliminadas (`isDeleted == false`).
@@ -32,6 +35,9 @@ abstract class DataRepository {
 
   /// Realiza un borrado lógico (Soft Delete) de la dirección.
   Future<void> deleteDireccion(String id);
+
+  /// Actualiza el orden secuencial de las direcciones.
+  Future<void> updateDireccionesOrder(List<String> orderedIds);
 
   // --- COTIZACIONES ---
 

@@ -93,7 +93,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -119,6 +119,7 @@ class DatabaseHelper {
       'sync_status': SyncStatus.pending.toValue(),
       'last_synced_at': null,
       'is_deleted': 0,
+      'orden': 0,
     });
 
     await db.insert('direcciones', {
@@ -133,6 +134,7 @@ class DatabaseHelper {
       'sync_status': SyncStatus.pending.toValue(),
       'last_synced_at': null,
       'is_deleted': 0,
+      'orden': 0,
     });
   }
 
@@ -150,7 +152,8 @@ class DatabaseHelper {
         is_synced INTEGER NOT NULL DEFAULT 0,
         sync_status TEXT NOT NULL DEFAULT 'pending',
         last_synced_at TEXT,
-        is_deleted INTEGER NOT NULL DEFAULT 0
+        is_deleted INTEGER NOT NULL DEFAULT 0,
+        orden INTEGER NOT NULL DEFAULT 0
       )
     ''');
 
@@ -166,7 +169,8 @@ class DatabaseHelper {
         is_synced INTEGER NOT NULL DEFAULT 0,
         sync_status TEXT NOT NULL DEFAULT 'pending',
         last_synced_at TEXT,
-        is_deleted INTEGER NOT NULL DEFAULT 0
+        is_deleted INTEGER NOT NULL DEFAULT 0,
+        orden INTEGER NOT NULL DEFAULT 0
       )
     ''');
   }
@@ -263,6 +267,23 @@ class DatabaseHelper {
     if (oldVersion < 3) {
       await _migrateToV3(db);
     }
+    if (oldVersion < 4) {
+      await _migrateToV4(db);
+    }
+  }
+
+  Future<void> _migrateToV4(Database db) async {
+    final qrInfo = await db.rawQuery("PRAGMA table_info(qr_codes)");
+    final qrCols = qrInfo.map((r) => r['name'] as String).toSet();
+    if (!qrCols.contains('orden')) {
+      await db.execute('ALTER TABLE qr_codes ADD COLUMN orden INTEGER NOT NULL DEFAULT 0');
+    }
+
+    final dirInfo = await db.rawQuery("PRAGMA table_info(direcciones)");
+    final dirCols = dirInfo.map((r) => r['name'] as String).toSet();
+    if (!dirCols.contains('orden')) {
+      await db.execute('ALTER TABLE direcciones ADD COLUMN orden INTEGER NOT NULL DEFAULT 0');
+    }
   }
 
   Future<void> _migrateToV3(Database db) async {
@@ -291,6 +312,7 @@ class DatabaseHelper {
         'sync_status': SyncStatus.pending.toValue(),
         'last_synced_at': null,
         'is_deleted': 0,
+        'orden': 0,
       });
     }
     await db.execute('DROP TABLE IF EXISTS old_qr_codes');
@@ -313,6 +335,7 @@ class DatabaseHelper {
         'sync_status': SyncStatus.pending.toValue(),
         'last_synced_at': null,
         'is_deleted': 0,
+        'orden': 0,
       });
     }
     await db.execute('DROP TABLE IF EXISTS old_direcciones');
@@ -334,7 +357,7 @@ class DatabaseHelper {
     final maps = await db.query(
       'qr_codes',
       where: includeDeleted ? null : 'is_deleted = 0',
-      orderBy: 'updated_at DESC',
+      orderBy: 'orden ASC, updated_at DESC',
     );
     return maps.map((map) => QRCodeModel.fromMap(map)).toList();
   }
@@ -356,6 +379,21 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [qrCode.id],
     );
+  }
+
+  /// Actualiza en lote el orden de los códigos QR
+  Future<void> updateQRCodesOrder(List<String> orderedIds) async {
+    final db = await database;
+    final batch = db.batch();
+    for (int i = 0; i < orderedIds.length; i++) {
+      batch.update(
+        'qr_codes',
+        {'orden': i},
+        where: 'id = ?',
+        whereArgs: [orderedIds[i]],
+      );
+    }
+    await batch.commit(noResult: true);
   }
 
   /// Borrado Lógico (Soft Delete)
@@ -407,7 +445,7 @@ class DatabaseHelper {
     final maps = await db.query(
       'direcciones',
       where: includeDeleted ? null : 'is_deleted = 0',
-      orderBy: 'updated_at DESC',
+      orderBy: 'orden ASC, updated_at DESC',
     );
     return maps.map((map) => DireccionModel.fromMap(map)).toList();
   }
@@ -419,6 +457,21 @@ class DatabaseHelper {
       return DireccionModel.fromMap(maps.first);
     }
     return null;
+  }
+
+  /// Actualiza en lote el orden de las direcciones
+  Future<void> updateDireccionesOrder(List<String> orderedIds) async {
+    final db = await database;
+    final batch = db.batch();
+    for (int i = 0; i < orderedIds.length; i++) {
+      batch.update(
+        'direcciones',
+        {'orden': i},
+        where: 'id = ?',
+        whereArgs: [orderedIds[i]],
+      );
+    }
+    await batch.commit(noResult: true);
   }
 
   /// Borrado Lógico (Soft Delete)

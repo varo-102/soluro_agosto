@@ -7,7 +7,9 @@ import 'package:soluro/repositories/data_repository.dart';
 import 'package:soluro/repositories/local_data_repository.dart';
 import 'package:soluro/repositories/sync_data_repository.dart';
 import 'package:soluro/screens/direcciones/add_direccion_modal.dart';
+import 'package:soluro/screens/direcciones/direcciones_list_screen.dart';
 import 'package:soluro/screens/qr/add_qr_modal.dart';
+import 'package:soluro/screens/qr/qr_list_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:soluro/services/database_helper.dart';
 
@@ -242,4 +244,114 @@ void main() {
       expect(find.text('Guardar Dirección'), findsOneWidget);
     });
   });
+
+  group('ReorderableListView Tests', () {
+    testWidgets('QRListScreen renders ReorderableListView when codes are present', (tester) async {
+      final qrs = [
+        QRCodeModel(
+          id: 'qr-1',
+          banco: 'Banco Sol',
+          referencia: 'Cobro 1',
+          fechaExpiracion: DateTime.now().add(const Duration(days: 5)),
+          rutaImagen: '',
+          orden: 0,
+        ),
+        QRCodeModel(
+          id: 'qr-2',
+          banco: 'Banco BISA',
+          referencia: 'Cobro 2',
+          fechaExpiracion: DateTime.now().add(const Duration(days: 10)),
+          rutaImagen: '',
+          orden: 1,
+        ),
+      ];
+
+      final fakeRepo = FakeReorderRepository(qrs: qrs, dirs: []);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: QRListScreen(repository: fakeRepo),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ReorderableListView), findsOneWidget);
+      expect(find.text('Banco Sol'), findsOneWidget);
+      expect(find.text('Banco BISA'), findsOneWidget);
+      expect(find.byTooltip('Arrastrar para reordenar'), findsNWidgets(2));
+    });
+
+    testWidgets('DireccionesListScreen renders ReorderableListView when addresses are present', (tester) async {
+      final dirs = [
+        DireccionModel(
+          id: 'dir-1',
+          titulo: 'Sucursal Central',
+          detalle: 'Av. Principal #100',
+          urlMaps: 'https://maps.google.com/?q=0,0',
+          orden: 0,
+        ),
+        DireccionModel(
+          id: 'dir-2',
+          titulo: 'Sucursal Norte',
+          detalle: 'Av. Norte #200',
+          urlMaps: 'https://maps.google.com/?q=1,1',
+          orden: 1,
+        ),
+      ];
+
+      final fakeRepo = FakeReorderRepository(qrs: [], dirs: dirs);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DireccionesListScreen(repository: fakeRepo),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ReorderableListView), findsOneWidget);
+      expect(find.text('Sucursal Central'), findsOneWidget);
+      expect(find.text('Sucursal Norte'), findsOneWidget);
+      expect(find.byTooltip('Arrastrar para reordenar'), findsNWidgets(2));
+    });
+  });
+}
+
+class FakeReorderRepository implements DataRepository {
+  List<QRCodeModel> qrs;
+  List<DireccionModel> dirs;
+
+  FakeReorderRepository({required this.qrs, required this.dirs});
+
+  @override
+  Future<List<QRCodeModel>> getQRCodes({bool includeDeleted = false}) async => qrs;
+  @override
+  Future<QRCodeModel?> getQRCodeById(String id) async => qrs.firstWhere((q) => q.id == id);
+  @override
+  Future<void> saveQRCode(QRCodeModel qrCode) async => qrs.add(qrCode);
+  @override
+  Future<void> deleteQRCode(String id) async => qrs.removeWhere((q) => q.id == id);
+  @override
+  Future<void> updateQRCodesOrder(List<String> orderedIds) async {
+    qrs.sort((a, b) => orderedIds.indexOf(a.id).compareTo(orderedIds.indexOf(b.id)));
+  }
+
+  @override
+  Future<List<DireccionModel>> getDirecciones({bool includeDeleted = false}) async => dirs;
+  @override
+  Future<DireccionModel?> getDireccionById(String id) async => dirs.firstWhere((d) => d.id == id);
+  @override
+  Future<void> saveDireccion(DireccionModel direccion) async => dirs.add(direccion);
+  @override
+  Future<void> deleteDireccion(String id) async => dirs.removeWhere((d) => d.id == id);
+  @override
+  Future<void> updateDireccionesOrder(List<String> orderedIds) async {
+    dirs.sort((a, b) => orderedIds.indexOf(a.id).compareTo(orderedIds.indexOf(b.id)));
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

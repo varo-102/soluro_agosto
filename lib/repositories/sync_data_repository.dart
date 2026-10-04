@@ -65,6 +65,11 @@ class SyncDataRepository implements DataRepository {
   }
 
   @override
+  Future<void> updateQRCodesOrder(List<String> orderedIds) async {
+    await _localRepo.updateQRCodesOrder(orderedIds);
+  }
+
+  @override
   Future<List<DireccionModel>> getDirecciones({bool includeDeleted = false}) {
     return _localRepo.getDirecciones(includeDeleted: includeDeleted);
   }
@@ -86,6 +91,11 @@ class SyncDataRepository implements DataRepository {
     // Aplica borrado lógico localmente
     await _localRepo.deleteDireccion(id);
     // unawaited(syncDirecciones());
+  }
+
+  @override
+  Future<void> updateDireccionesOrder(List<String> orderedIds) async {
+    await _localRepo.updateDireccionesOrder(orderedIds);
   }
 
   // --- COTIZACIONES ---

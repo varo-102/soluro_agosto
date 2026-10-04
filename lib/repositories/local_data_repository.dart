@@ -45,6 +45,11 @@ class LocalDataRepository implements DataRepository {
     return _dbHelper.softDeleteQRCode(id);
   }
 
+  @override
+  Future<void> updateQRCodesOrder(List<String> orderedIds) {
+    return _dbHelper.updateQRCodesOrder(orderedIds);
+  }
+
   // --- DIRECCIONES ---
 
   @override
@@ -75,6 +80,11 @@ class LocalDataRepository implements DataRepository {
   @override
   Future<void> deleteDireccion(String id) {
     return _dbHelper.softDeleteDireccion(id);
+  }
+
+  @override
+  Future<void> updateDireccionesOrder(List<String> orderedIds) {
+    return _dbHelper.updateDireccionesOrder(orderedIds);
   }
 
   // --- COTIZACIONES ---

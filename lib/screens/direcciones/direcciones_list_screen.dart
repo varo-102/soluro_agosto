@@ -110,6 +110,19 @@ class DireccionesListScreenState extends State<DireccionesListScreen> {
     );
   }
 
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final item = _direccionesList.removeAt(oldIndex);
+      _direccionesList.insert(newIndex, item);
+    });
+
+    final orderedIds = _direccionesList.map((d) => d.id).toList();
+    _repository.updateDireccionesOrder(orderedIds);
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -120,205 +133,235 @@ class DireccionesListScreenState extends State<DireccionesListScreen> {
       );
     }
 
+    if (_direccionesList.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: loadDirecciones,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.7,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.storefront_rounded,
+                    size: 72,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'No tienes direcciones guardadas',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondaryLight,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Presiona "+ Añadir Dirección" para guardar tu primera ubicación.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _showAddModal,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.amarilloSol,
+                      foregroundColor: AppColors.azulProfundo,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Añadir Dirección'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return RefreshIndicator(
       onRefresh: loadDirecciones,
-      child: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.all(16.0),
-            sliver: _direccionesList.isEmpty
-                ? SliverFillRemaining(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.storefront_rounded,
-                            size: 72,
-                            color: Colors.grey.shade400,
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'No tienes direcciones guardadas',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textSecondaryLight,
+      child: ReorderableListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: _direccionesList.length,
+        // ignore: deprecated_member_use
+        onReorder: _onReorder,
+        proxyDecorator: (Widget child, int index, Animation<double> animation) {
+          return AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget? child) {
+              return Material(
+                elevation: 6,
+                color: Colors.transparent,
+                shadowColor: Colors.black26,
+                borderRadius: BorderRadius.circular(16),
+                child: child,
+              );
+            },
+            child: child,
+          );
+        },
+        footer: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: ElevatedButton.icon(
+            onPressed: _showAddModal,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.amarilloSol,
+              foregroundColor: AppColors.azulProfundo,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              elevation: 1,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            icon: const Icon(Icons.add, size: 24),
+            label: const Text(
+              'Añadir Dirección',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        itemBuilder: (context, index) {
+          final dir = _direccionesList[index];
+
+          return Card(
+            key: ValueKey(dir.id),
+            margin: const EdgeInsets.only(bottom: 12.0),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.storefront,
+                              color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Presiona "+ Añadir Dirección" para guardar tu primera ubicación.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton.icon(
-                            onPressed: _showAddModal,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.amarilloSol,
-                              foregroundColor: AppColors.azulProfundo,
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                            ),
-                            icon: const Icon(Icons.add),
-                            label: const Text('Añadir Dirección'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (index == _direccionesList.length) {
-                          // Bottom "+ Añadir Dirección" button
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            child: ElevatedButton.icon(
-                              onPressed: _showAddModal,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.amarilloSol,
-                                foregroundColor: AppColors.azulProfundo,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                elevation: 1,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              icon: const Icon(Icons.add, size: 24),
-                              label: const Text(
-                                'Añadir Dirección',
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                dir.titulo,
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
+                                  color: isDark ? AppColors.textPrimaryDark : AppColors.azulProfundo,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit_outlined, size: 22),
+                            color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                            tooltip: 'Editar',
+                            onPressed: () => _showEditModal(dir),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, size: 22),
+                            color: Colors.grey.shade600,
+                            tooltip: 'Eliminar',
+                            onPressed: () => _deleteDireccion(dir.id),
+                          ),
+                          ReorderableDragStartListener(
+                            index: index,
+                            child: Tooltip(
+                              message: 'Arrastrar para reordenar',
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: Icon(
+                                  Icons.drag_indicator_rounded,
+                                  size: 22,
+                                  color: Colors.grey.shade400,
                                 ),
                               ),
                             ),
-                          );
-                        }
-
-                        final dir = _direccionesList[index];
-
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 12.0),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.storefront,
-                                            color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              dir.titulo,
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: isDark ? AppColors.textPrimaryDark : AppColors.azulProfundo,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.edit_outlined, size: 22),
-                                          color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                                          tooltip: 'Editar',
-                                          onPressed: () => _showEditModal(dir),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete_outline, size: 22),
-                                          color: Colors.grey.shade600,
-                                          tooltip: 'Eliminar',
-                                          onPressed: () => _deleteDireccion(dir.id),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-
-                                // Detail
-                                Text(
-                                  dir.detalle,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                                    height: 1.4,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-
-                                // Maps Link Action & Copy Info Button
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: OutlinedButton.icon(
-                                        onPressed: () => _openMaps(dir.urlMaps),
-                                        style: OutlinedButton.styleFrom(
-                                          side: BorderSide(
-                                            color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                                          ),
-                                          foregroundColor: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                                        ),
-                                        icon: const Icon(Icons.map_outlined, size: 18),
-                                        label: const Text(
-                                          'Abrir en Maps',
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-                                        onPressed: () async {
-                                          final textToCopy = dir.formattedCopyText;
-                                          await ClipboardService.copyTextToClipboard(textToCopy);
-                                          if (context.mounted) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(
-                                                content: Text('¡Información de dirección copiada al portapapeles!'),
-                                                backgroundColor: AppColors.azulProfundo,
-                                                duration: Duration(seconds: 2),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
-                                          foregroundColor: isDark ? AppColors.azulProfundo : Colors.white,
-                                        ),
-                                        icon: const Icon(Icons.copy, size: 18),
-                                        label: const Text('Copy Info'),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
                           ),
-                        );
-                      },
-                      childCount: _direccionesList.length + 1,
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Detail
+                  Text(
+                    dir.detalle,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                      height: 1.4,
                     ),
                   ),
-          ),
-        ],
+                  const SizedBox(height: 12),
+
+                  // Maps Link Action & Copy Info Button
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () => _openMaps(dir.urlMaps),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                            ),
+                            foregroundColor: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                          ),
+                          icon: const Icon(Icons.map_outlined, size: 18),
+                          label: const Text(
+                            'Abrir en Maps',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            final textToCopy = dir.formattedCopyText;
+                            await ClipboardService.copyTextToClipboard(textToCopy);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('¡Información de dirección copiada al portapapeles!'),
+                                  backgroundColor: AppColors.azulProfundo,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isDark ? AppColors.amarilloSol : AppColors.azulProfundo,
+                            foregroundColor: isDark ? AppColors.azulProfundo : Colors.white,
+                          ),
+                          icon: const Icon(Icons.copy, size: 18),
+                          label: const Text('Copy Info'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

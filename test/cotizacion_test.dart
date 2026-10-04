@@ -505,6 +505,8 @@ class FakeCotizacionRepository implements DataRepository {
   Future<void> saveQRCode(QRCodeModel qrCode) async {}
   @override
   Future<void> deleteQRCode(String id) async {}
+  @override
+  Future<void> updateQRCodesOrder(List<String> orderedIds) async {}
 
   @override
   Future<List<DireccionModel>> getDirecciones({bool includeDeleted = false}) async => [];
@@ -514,5 +516,7 @@ class FakeCotizacionRepository implements DataRepository {
   Future<void> saveDireccion(DireccionModel direccion) async {}
   @override
   Future<void> deleteDireccion(String id) async {}
+  @override
+  Future<void> updateDireccionesOrder(List<String> orderedIds) async {}
 }
 
