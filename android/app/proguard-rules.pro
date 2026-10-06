@@ -9,10 +9,6 @@
 # Flutter Plugins
 -keep class io.flutter.plugins.** { *; }
 
-# Flutter Local Notifications
--keep class com.dexterous.flutterlocalnotifications.** { *; }
--keep class androidx.core.app.NotificationCompat** { *; }
-
 # SQLite (sqflite)
 -keep class com.tekartik.sqflite.** { *; }
 

@@ -4,7 +4,6 @@ import '../../models/qr_code_model.dart';
 import '../../repositories/data_repository.dart';
 import '../../repositories/repository_provider.dart';
 import '../../services/clipboard_service.dart';
-import '../../services/notification_service.dart';
 import '../../services/quick_actions_service.dart';
 import '../../theme/app_colors.dart';
 import 'add_qr_modal.dart';
@@ -42,9 +41,8 @@ class QRListScreenState extends State<QRListScreen> {
       _isLoading = false;
     });
 
-    // Register Quick Actions & check expiration notifications
+    // Register Quick Actions
     QuickActionsService().updateQuickActions(list);
-    NotificationService().checkExpirationNotifications(list);
   }
 
   Future<void> _deleteQR(String id) async {

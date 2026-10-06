@@ -39,7 +39,6 @@ dependencies:
   image_picker: ^1.1.0
   intl: ^0.19.0
   url_launcher: ^6.2.1
-  flutter_local_notifications: ^17.0.0
   quick_actions: ^1.0.6
   share_plus: ^9.0.0
   uuid: ^4.5.1

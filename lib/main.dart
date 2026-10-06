@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'repositories/repository_provider.dart';
-import 'services/notification_service.dart';
 import 'services/quick_actions_service.dart';
 import 'screens/qr/full_screen_qr_viewer.dart';
 import 'theme/app_theme.dart';
@@ -11,17 +10,6 @@ void main() {
 
   // Iniciar la aplicación inmediatamente para renderizar el primer fotograma
   runApp(const SoluroApp());
-
-  // Inicializar servicios en segundo plano de manera no bloqueante
-  _initServicesAsync();
-}
-
-Future<void> _initServicesAsync() async {
-  try {
-    await NotificationService().init();
-  } catch (e) {
-    debugPrint('Error al inicializar NotificationService: $e');
-  }
 }
 
 class SoluroApp extends StatefulWidget {
