@@ -14,5 +14,4 @@
 
     <!-- Excluir almacenamiento sensible cifrado para evitar corrupción de Keystore tras reinstalación -->
     <exclude domain="sharedpref" path="FlutterSecureStorage.xml" />
-    <exclude domain="root" path="cache" />
 </full-backup-content>

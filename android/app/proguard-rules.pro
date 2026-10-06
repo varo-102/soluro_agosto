@@ -6,6 +6,12 @@
 -keep class io.flutter.** { *; }
 -dontwarn io.flutter.embedding.**
 
+# Google Play Console / Stack Trace Line Numbers & Metadata
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+-keepattributes *Annotation*
+-keepattributes InnerClasses,EnclosingMethod
+
 # Flutter Plugins
 -keep class io.flutter.plugins.** { *; }
 
@@ -26,3 +32,4 @@
 # Desugaring & Java 8+ APIs
 -dontwarn com.google.errorprone.annotations.**
 -dontwarn java.lang.invoke.**
+
