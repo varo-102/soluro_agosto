@@ -32,7 +32,18 @@ class NotificationService {
     );
 
     await _notificationsPlugin.initialize(initSettings);
+    await requestNotificationPermission();
     _isInitialized = true;
+  }
+
+  /// Solicita permisos de notificación en tiempo de ejecución para Android 13+ (API 33+) e iOS.
+  Future<bool?> requestNotificationPermission() async {
+    final androidImplementation = _notificationsPlugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (androidImplementation != null) {
+      return await androidImplementation.requestNotificationsPermission();
+    }
+    return null;
   }
 
   /// Checks a list of QR codes and shows local alerts if expiring in <= 7 days
