@@ -4,6 +4,7 @@ import 'package:soluro/models/cotizacion_model.dart';
 import 'package:soluro/repositories/data_repository.dart';
 import 'package:soluro/screens/cotizaciones/cotizacion_screen.dart';
 import 'package:soluro/screens/main_screen.dart';
+import 'package:soluro/screens/qr/qr_list_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class MockDataRepository implements DataRepository {
@@ -169,5 +170,34 @@ void main() {
 
     // The banner should appear again on Cotizaciones tab
     expect(find.textContaining('iniciada'), findsOneWidget);
+  });
+
+  testWidgets('MainScreen defaults to QR module on initial launch', (tester) async {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+
+    final themeNotifier = ValueNotifier<ThemeMode>(ThemeMode.light);
+    final mockRepo = MockDataRepository();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MainScreen(
+          themeNotifier: themeNotifier,
+          repository: mockRepo,
+        ),
+      ),
+    );
+
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Verify AppBar shows 'QR - Cobros'
+    expect(find.text('QR - Cobros'), findsOneWidget);
+
+    // Verify QRListScreen is loaded
+    expect(find.byType(QRListScreen), findsOneWidget);
+
+    // Verify CotizacionScreen is not rendered initially (lazy loaded)
+    expect(find.byType(CotizacionScreen), findsNothing);
   });
 }

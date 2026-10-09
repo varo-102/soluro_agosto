@@ -19,7 +19,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 1; // Inicia en Cotizaciones (la sección central más importante)
+  int _currentIndex = 0; // Inicia en QR (el módulo más utilizado al abrir la aplicación)
   late final Set<int> _loadedTabs = {_currentIndex};
   final GlobalKey<QRListScreenState> _qrListKey =
       GlobalKey<QRListScreenState>();
@@ -96,11 +96,18 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onTabTapped(int index) {
+    final bool isFirstLoad = !_loadedTabs.contains(index);
     _loadedTabs.add(index);
     if (index == 1) {
       // SIEMPRE que se presiona el botón inferior de "Cotizaciones",
       // se genera y muestra una nueva cotización en blanco.
-      _cotizacionKey.currentState?.resetToNew();
+      if (isFirstLoad) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _cotizacionKey.currentState?.resetToNew();
+        });
+      } else {
+        _cotizacionKey.currentState?.resetToNew();
+      }
     } else {
       // Ocultar banner de cotizaciones al cambiar a otra pestaña (QR o Mis Direcciones)
       _cotizacionKey.currentState?.hideBanner();
